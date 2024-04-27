@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.MapperApp;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
+using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.CategoryVM;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
@@ -7,16 +9,23 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
     public class CategoryController : Controller
     {
         private readonly IGenericService<Category> _repository;
+        private readonly IMapper<Category, CategoryListVM> _listMapper;
+        private readonly IMapper<Category, CategoryCreateVM> _CreateMapper;
+        private readonly IMapper<Category, CategoryUpdateVM> _UpdateMapper;
 
-        public CategoryController(IGenericService<Category> repository)
+        public CategoryController(IGenericService<Category> repository, IMapper<Category, CategoryListVM> listMapper, IMapper<Category, CategoryCreateVM> createMapper, IMapper<Category, CategoryUpdateVM> updateMapper)
         {
             _repository = repository;
+            _listMapper = listMapper;
+            _CreateMapper = createMapper;
+            _UpdateMapper = updateMapper;
         }
 
         public IActionResult GetAllCategories()
         {
             var categories = _repository.GetAllItems();
-            return View(categories);
+            var mappedCategoryList = _listMapper.Map<IList<Category>,List<CategoryListVM>>(categories);
+            return View(mappedCategoryList);
         }
 
         [HttpGet]
@@ -26,9 +35,10 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCategory(Category request)
+        public IActionResult CreateCategory(CategoryCreateVM request)
         {
-            _repository.CreateItem(request);
+            var category = _CreateMapper.Map<CategoryCreateVM,Category>(request);
+            _repository.CreateItem(category);
             return RedirectToAction("GetAllCategories", "Category");
         }
 
@@ -40,9 +50,10 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateCategory(Category request)
+        public IActionResult UpdateCategory(CategoryUpdateVM request)
         {
-            _repository.UpdateItem(request);
+            var category = _UpdateMapper.Map<CategoryUpdateVM, Category>(request);
+            _repository.UpdateItem(category);
             return RedirectToAction("GetAllCategories", "Category");
         }
 
