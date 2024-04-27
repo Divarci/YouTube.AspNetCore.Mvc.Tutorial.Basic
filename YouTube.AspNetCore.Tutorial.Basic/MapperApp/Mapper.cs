@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using Azure.Core;
+using Elfie.Serialization;
+using System.Reflection;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.MapperApp
 {
@@ -14,49 +16,52 @@ namespace YouTube.AspNetCore.Tutorial.Basic.MapperApp
                 var sourceList = (ICollection<EntityIn>)request!;
 
                 var destinationObject = Activator.CreateInstance(typeof(Destination));
-                var destinationList = (ICollection<EntityOut>)destinationObject!;
+                var destinationList = (ICollection<EntityOut>)destinationObject!;                            
 
-                PropertyInfo[] entityInProps = typeof(EntityIn).GetProperties();
-                PropertyInfo[] entityOutProps = typeof(EntityOut).GetProperties();
-
-                foreach (var entityIn in sourceList)
+                foreach (var item in sourceList)
                 {
-                    var destinationOutObject = Activator.CreateInstance(typeof(EntityOut));
-
-                    foreach (var entityOut in entityOutProps)
-                    {
-                        var property = entityInProps.FirstOrDefault(x => x.Name == entityOut.Name && x.PropertyType == entityOut.PropertyType);
-
-                        if(property != null)
-                        {
-                            var value = property.GetValue(entityIn);
-                            entityOut.SetValue(destinationOutObject, value);
-                        }
-                    }
-
+                    var destinationOutObject = MapObject(typeof(EntityIn), item, typeof(EntityOut));
                     destinationList.Add((EntityOut)destinationOutObject!);
                 }
 
                 return (Destination)destinationList;
             }
 
-            PropertyInfo[] sourceProperties = typeof(Source).GetProperties();
-            PropertyInfo[] destinationProperties = typeof(Destination).GetProperties();
+            var destination = MapObject(typeof(EntityIn), request, typeof(EntityOut));
 
-            var destination = Activator.CreateInstance(typeof(Destination));
+            return (Destination)destination!;
+        }
+
+        private object MapObject(Type entityIn,object source, Type entityOut)
+        {
+
+            PropertyInfo[] sourceProperties = entityIn.GetProperties();
+            PropertyInfo[] destinationProperties = entityOut.GetProperties();
+
+            var destination = Activator.CreateInstance(entityOut);
             foreach (var propertyOut in destinationProperties)
             {
                 foreach (var propertyIn in sourceProperties)
                 {
-                    if(propertyOut.Name == propertyIn.Name && propertyOut.PropertyType == propertyIn.PropertyType)
+                    if(propertyOut.PropertyType.Name.Contains(propertyIn.PropertyType.Name) && propertyOut.PropertyType.IsClass && propertyOut.PropertyType != typeof(string))
                     {
-                        var value = propertyIn.GetValue(request);
+                        var nestedValue = propertyIn.GetValue(source);
+                        var subDestination = MapObject(propertyIn.PropertyType, nestedValue,propertyOut.PropertyType);
+                        propertyOut.SetValue(destination, subDestination);
+                        break;
+                    }
+
+
+                    if (propertyOut.Name == propertyIn.Name && propertyOut.PropertyType == propertyIn.PropertyType)
+                    {
+                        var value = propertyIn.GetValue(source);
                         propertyOut.SetValue(destination, value);
+                        break;
                     }
                 }
             }
 
-            return (Destination)destination!;
+            return destination!;
         }
     }
 }
