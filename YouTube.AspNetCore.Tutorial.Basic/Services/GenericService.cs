@@ -24,7 +24,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services
             _repository.DeleteItem(item);
         }
 
-        public IList<TEntity> GetAll(params Expression<Func<TEntity, object>>[]? includeProperties)
+        public IList<TEntity> GetAllItems(params Expression<Func<TEntity, object>>[]? includeProperties)
         {
             var items = _repository.GetAll(); // IQueyable<Product>
             if(includeProperties is not null) // GetAll(x=>x.Categories, x.ProductFeatures)
