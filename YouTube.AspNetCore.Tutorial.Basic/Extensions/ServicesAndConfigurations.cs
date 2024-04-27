@@ -17,7 +17,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
             });
 
             services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
-            services.AddScoped(typeof(IGenericService<>),typeof(GenericService<>));
+            services.AddScoped(typeof(IGenericService<,,,>),typeof(GenericService<,,,>));
             services.AddScoped(typeof(IMapper<,>), typeof(Mapper<,>));
 
             return services;
