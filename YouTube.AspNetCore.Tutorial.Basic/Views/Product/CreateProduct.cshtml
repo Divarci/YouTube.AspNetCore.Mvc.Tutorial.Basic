@@ -2,36 +2,57 @@
 @{
     ViewData["Title"] = "CreateProduct";
 }
-
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
 <h1>Create Product</h1>
 
 <form action="CreateProduct" method="post">
     <div class="mb-3">
-        <input type="text" class="form-control" asp-for="Name" placeholder="Enter a product name here">
+        <label asp-for="Name" class="form-label">Product Name</label>
+        <input type="text" class="form-control" asp-for="Name">
+        <span asp-validation-for="Name" class="text-danger"></span>
+
     </div>
 
     <div class="mb-3">
-        <input type="number" class="form-control" asp-for="Quantity" placeholder="Enter product stock level">
+        <label asp-for="Quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" asp-for="Quantity">
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+
     </div>
 
     <div class="mb-3">
-        <input type="number" class="form-control" asp-for="CategoryId" placeholder="Enter category id">
+        <label asp-for="CategoryId" class="form-label">Category</label>
+        <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories,"Id","Name"))" class="form-select"></select> 
     </div>
 
     <div class="mb-3">
-        <input type="text" class="form-control" asp-for="Price" placeholder="Enter product price">
+        <label asp-for="Price" class="form-label">Price</label>
+        <input type="text" class="form-control" asp-for="Price">
+        <span asp-validation-for="Price" class="text-danger"></span>
+
     </div>
 
     <div class="mb-3">
-        <input type="text" class="form-control" asp-for="ProductFeature.Height" placeholder="Enter product height">
+        <label asp-for="ProductFeature.Height" class="form-label">Height(Optional)</label>
+        <input type="text" class="form-control" asp-for="ProductFeature.Height">
+        <span asp-validation-for="ProductFeature.Height" class="text-danger"></span>
+
     </div>
 
     <div class="mb-3">
-        <input type="text" class="form-control" asp-for="ProductFeature.Weight" placeholder="Enter product weight">
+        <label asp-for="ProductFeature.Weight" class="form-label">Weight(Optional)</label>
+        <input type="text" class="form-control" asp-for="ProductFeature.Weight">
+        <span asp-validation-for="ProductFeature.Weight" class="text-danger"></span>
+
     </div>
 
     <div class="mb-3">
-        <input type="text" class="form-control" asp-for="ProductFeature.Colour" placeholder="Enter product colour">
+        <label asp-for="ProductFeature.Colour" class="form-label">Colour(Optional)</label>
+        <input type="text" class="form-control" asp-for="ProductFeature.Colour" >
+        <span asp-validation-for="ProductFeature.Colour" class="text-danger"></span>
+
     </div>
 
     <button class="btn btn-outline-success">Create</button>

@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using YouTube.AspNetCore.Tutorial.Basic.Context;
 using YouTube.AspNetCore.Tutorial.Basic.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

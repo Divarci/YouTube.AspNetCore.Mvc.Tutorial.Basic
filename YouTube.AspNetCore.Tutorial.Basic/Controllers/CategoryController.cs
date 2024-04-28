@@ -29,6 +29,10 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
         [HttpPost]
         public IActionResult CreateCategory(CategoryCreateVM request)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
             _repository.CreateItem(request);
             return RedirectToAction("GetAllCategories", "Category");
         }
@@ -43,6 +47,10 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
         [HttpPost]
         public IActionResult UpdateCategory(CategoryUpdateVM request)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
             _repository.UpdateItem(request);
             return RedirectToAction("GetAllCategories", "Category");
         }

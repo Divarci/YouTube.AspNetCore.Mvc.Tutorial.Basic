@@ -2,12 +2,15 @@
 @{
     ViewData["Title"] = "CreateCategory";
 }
-
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
 <h1>Create New Category</h1>
 
 <form action="CreateCategory" method="post"> 
     <div class="mb-3">
         <input type="text" class="form-control" asp-for="Name" placeholder="Enter a category name here">
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <button class="btn btn-outline-success">Create</button>
