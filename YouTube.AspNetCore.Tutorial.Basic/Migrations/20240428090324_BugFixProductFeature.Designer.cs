@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouTube.AspNetCore.Tutorial.Basic.Context;
 
@@ -10,9 +11,11 @@ using YouTube.AspNetCore.Tutorial.Basic.Context;
 namespace YouTube.AspNetCore.Tutorial.Basic.Migrations
 {
     [DbContext(typeof(CustomContext))]
-    partial class CustomContextModelSnapshot : ModelSnapshot
+    [Migration("20240428090324_BugFixProductFeature")]
+    partial class BugFixProductFeature
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

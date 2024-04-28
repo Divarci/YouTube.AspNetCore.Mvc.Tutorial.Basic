@@ -19,5 +19,18 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             var products = _repository.GetAllItems(x=>x.Category,x=>x.ProductFeature!);
             return View(products);
         }
+
+        [HttpGet]
+        public IActionResult CreateProduct()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateProduct(ProductCreateVM request)
+        {
+            _repository.CreateItem(request);
+            return RedirectToAction("GetAllProducts", "Product");
+        }
     }
 }

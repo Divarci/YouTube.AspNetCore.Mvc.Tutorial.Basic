@@ -33,8 +33,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.MapperApp
         }
 
         private object MapObject(Type entityIn,object source, Type entityOut)
-        {
-
+        {            
             PropertyInfo[] sourceProperties = entityIn.GetProperties();
             PropertyInfo[] destinationProperties = entityOut.GetProperties();
 
@@ -43,7 +42,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.MapperApp
             {
                 foreach (var propertyIn in sourceProperties)
                 {
-                    if(propertyOut.PropertyType.Name.Contains(propertyIn.PropertyType.Name) && propertyOut.PropertyType.IsClass && propertyOut.PropertyType != typeof(string))
+                    if(propertyOut.Name == propertyIn.Name && propertyOut.PropertyType.IsClass && propertyOut.PropertyType != typeof(string))
                     {
                         var nestedValue = propertyIn.GetValue(source);
                         var subDestination = MapObject(propertyIn.PropertyType, nestedValue,propertyOut.PropertyType);

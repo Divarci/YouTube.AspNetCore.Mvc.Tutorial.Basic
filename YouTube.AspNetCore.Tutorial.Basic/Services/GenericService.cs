@@ -13,14 +13,14 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services
     {
         private readonly IGenericRepository<TEntity> _repository;
         private readonly IMapper<TEntity, TListVM> _listMapper;
-        private readonly IMapper<TEntity, TCreateVM> _CreateMapper;
-        private readonly IMapper<TEntity, TUpdateVM> _UpdateMapper;
+        private readonly IMapper<TCreateVM, TEntity> _CreateMapper;
+        private readonly IMapper<TUpdateVM, TEntity> _UpdateMapper;
 
         public GenericService(
             IGenericRepository<TEntity> repository, 
             IMapper<TEntity, TListVM> listMapper, 
-            IMapper<TEntity, TCreateVM> createMapper, 
-            IMapper<TEntity, TUpdateVM> updateMapper)
+            IMapper<TCreateVM, TEntity> createMapper, 
+            IMapper<TUpdateVM, TEntity> updateMapper)
         {
             _repository = repository;
             _listMapper = listMapper;
