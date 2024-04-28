@@ -11,6 +11,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Configuration
         {
             builder.Property(x => x.Name).HasMaxLength(25);
 
+            builder.Navigation(x => x.ProductFeature).AutoInclude();
+
             builder.HasData(new Product
             {
                 Id = 1,

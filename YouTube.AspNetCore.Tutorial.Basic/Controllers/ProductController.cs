@@ -16,7 +16,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 
         public IActionResult GetAllProducts()
         {
-            var products = _repository.GetAllItems(x=>x.Category,x=>x.ProductFeature!);
+            var products = _repository.GetAllItems(x=>x.Category);
             return View(products);
         }
 
@@ -30,6 +30,26 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
         public IActionResult CreateProduct(ProductCreateVM request)
         {
             _repository.CreateItem(request);
+            return RedirectToAction("GetAllProducts", "Product");
+        }
+
+        [HttpGet]
+        public IActionResult UpdateProduct(int id)
+        {
+            var product = _repository.GetItemById(id);
+            return View(product);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateProduct(ProductUpdateVM request)
+        {
+            _repository.UpdateItem(request);
+            return RedirectToAction("GetAllProducts", "Product");
+        }
+
+        public IActionResult DeleteProduct(int id)
+        {
+            _repository.DeleteItem(id);
             return RedirectToAction("GetAllProducts", "Product");
         }
     }

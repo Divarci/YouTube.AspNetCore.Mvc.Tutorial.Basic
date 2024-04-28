@@ -1,0 +1,44 @@
+﻿@model ProductUpdateVM
+@{
+    ViewData["Title"] = "UpdateProduct";
+}
+
+<h1>Update Product</h1>
+
+
+<form action="UpdateProduct" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ProductFeature.Id" />
+    <input type="hidden" asp-for="ProductFeature.ProductId" />
+
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Name" placeholder="Enter a product name here">
+    </div>
+
+    <div class="mb-3">
+        <input type="number" class="form-control" asp-for="Quantity" placeholder="Enter product stock level">
+    </div>
+
+    <div class="mb-3">
+        <input type="number" class="form-control" asp-for="CategoryId" placeholder="Enter category id">
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Price" placeholder="Enter product price">
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="ProductFeature.Height" placeholder="Enter product height">
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="ProductFeature.Weight" placeholder="Enter product weight">
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="ProductFeature.Colour" placeholder="Enter product colour">
+    </div>
+
+    <button class="btn btn-outline-success">Update</button>
+</form>
+

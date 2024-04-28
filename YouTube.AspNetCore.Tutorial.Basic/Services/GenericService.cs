@@ -15,17 +15,20 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services
         private readonly IMapper<TEntity, TListVM> _listMapper;
         private readonly IMapper<TCreateVM, TEntity> _CreateMapper;
         private readonly IMapper<TUpdateVM, TEntity> _UpdateMapper;
+        private readonly IMapper<TEntity, TUpdateVM> _itemMapper;
 
         public GenericService(
-            IGenericRepository<TEntity> repository, 
-            IMapper<TEntity, TListVM> listMapper, 
-            IMapper<TCreateVM, TEntity> createMapper, 
-            IMapper<TUpdateVM, TEntity> updateMapper)
+            IGenericRepository<TEntity> repository,
+            IMapper<TEntity, TListVM> listMapper,
+            IMapper<TCreateVM, TEntity> createMapper,
+            IMapper<TUpdateVM, TEntity> updateMapper,
+            IMapper<TEntity, TUpdateVM> itemMapper)
         {
             _repository = repository;
             _listMapper = listMapper;
             _CreateMapper = createMapper;
             _UpdateMapper = updateMapper;
+            _itemMapper = itemMapper;
         }
 
         public void CreateItem(TCreateVM request)
@@ -59,7 +62,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services
         public TUpdateVM GetItemById(int id)
         {
             var item = _repository.GetItemById(id);
-            var updateItem = _UpdateMapper.Map<TEntity, TUpdateVM>(item);
+            var updateItem = _itemMapper.Map<TEntity, TUpdateVM>(item);
             return updateItem;
         }
 
