@@ -1,0 +1,13 @@
+﻿@using YouTube.AspNetCore.Tutorial.Basic.Models.Others
+@model ErrorVM
+@{
+    ViewData["Title"] = "HandleExceptions";
+}
+
+@foreach (var error in Model.Errors)
+{
+    <h3>@error</h3>
+}
+<br/>
+<h3>@Model.StatusCode</h3>
+

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using YouTube.AspNetCore.Tutorial.Basic.Exceptions;
 using YouTube.AspNetCore.Tutorial.Basic.Generic_Repositories;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Filters
@@ -24,7 +25,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
             var value = context.ActionArguments.Values.FirstOrDefault();
             if (value == null)
             {
-                throw new Exception("Parameter can not be null");
+                throw new ClientSideExceptions("Parameter can not be null");
             }
 
             var intCheck = int.TryParse(value.ToString(), out var intValue);
@@ -33,7 +34,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
                 var entity = _repository.GetItemById(intValue);
                 if (entity == null)
                 {
-                    throw new Exception("Item not found");
+                    throw new ClientSideExceptions("Item not found");
                 }
                 return;
             }
@@ -41,7 +42,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
             var entityCheck = value is TUpdateVM;
             if (!entityCheck)
             {
-                throw new Exception("Invalid Object");
+                throw new ClientSideExceptions("Invalid Object");
             }
 
             var type = value.GetType();
@@ -49,13 +50,13 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
             var idValue = id.GetValue(value);
             if (idValue==null)
             {
-                throw new Exception("Property Name or Value is invalid");
+                throw new ClientSideExceptions("Property Name or Value is invalid");
             }
 
             var idValueIntCheck = int.TryParse(idValue.ToString(), out var idValueInt);
             if (!idValueIntCheck)
             {
-                throw new Exception("Invalid Id");
+                throw new ClientSideExceptions("Invalid Id");
             }
 
             var allEntites = _repository.GetAll();
@@ -70,7 +71,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
 
             if (!idList.Any(x=>x == idValueInt))
             {
-                throw new Exception("Item Not Found");
+                throw new ClientSideExceptions("Item Not Found");
             }
 
             return;
