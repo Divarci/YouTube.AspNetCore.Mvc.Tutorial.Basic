@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using YouTube.AspNetCore.Tutorial.Basic.Context;
+using YouTube.AspNetCore.Tutorial.Basic.Filters;
 using YouTube.AspNetCore.Tutorial.Basic.Generic_Repositories;
 using YouTube.AspNetCore.Tutorial.Basic.MapperApp;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
@@ -20,6 +20,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
             services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
             services.AddScoped(typeof(IGenericService<,,,>),typeof(GenericService<,,,>));
             services.AddScoped(typeof(IMapper<,>), typeof(Mapper<,>));
+
+            services.AddScoped(typeof(ParameterCheckFilter<,>));
 
             return services;
         }

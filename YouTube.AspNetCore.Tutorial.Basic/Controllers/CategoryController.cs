@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.Filters;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.CategoryVM;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
@@ -37,6 +38,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return RedirectToAction("GetAllCategories", "Category");
         }
 
+        [ServiceFilter(typeof(ParameterCheckFilter<Category,CategoryUpdateVM>))]
         [HttpGet]
         public IActionResult UpdateCategory(int id)
         {
@@ -44,6 +46,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return View(item);
         }
 
+        [ServiceFilter(typeof(ParameterCheckFilter<Category, CategoryUpdateVM>))]
         [HttpPost]
         public IActionResult UpdateCategory(CategoryUpdateVM request)
         {
@@ -55,6 +58,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return RedirectToAction("GetAllCategories", "Category");
         }
 
+        [ServiceFilter(typeof(ParameterCheckFilter<Category, CategoryUpdateVM>))]
         public IActionResult DeleteCategory(int id)
         {
             _repository.DeleteItem(id);
