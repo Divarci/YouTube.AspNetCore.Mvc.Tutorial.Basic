@@ -28,6 +28,13 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
                 throw new ClientSideExceptions("Parameter can not be null");
             }
 
+            var controllerName = context.Controller.GetType().Name.Replace("Controller", "");
+            var sourceEntityname = typeof(TEntity).Name;
+            if(controllerName != sourceEntityname)
+            {
+                throw new ClientSideExceptions("Source Entity is wrong, Please check your filter parameters");
+            }
+
             var intCheck = int.TryParse(value.ToString(), out var intValue);
             if (intCheck)
             {

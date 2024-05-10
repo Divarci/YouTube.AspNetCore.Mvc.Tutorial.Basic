@@ -1,5 +1,4 @@
 using YouTube.AspNetCore.Tutorial.Basic.Extensions;
-using YouTube.AspNetCore.Tutorial.Basic.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
