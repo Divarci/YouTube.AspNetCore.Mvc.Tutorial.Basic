@@ -1,0 +1,27 @@
+﻿@model UserCreateVM
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+
+<form asp-action="Register" method="post">
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Email" placeholder="Enter your email here">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Fullname" placeholder="Enter your Fulll Name here">
+        <span asp-validation-for="Fullname" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Password" placeholder="Enter your password here">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="PasswordConfirm" placeholder="Confirm your password">
+        <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+    </div>
+    <button class="btn btn-outline-success">Register</button>
+</form>                    
+

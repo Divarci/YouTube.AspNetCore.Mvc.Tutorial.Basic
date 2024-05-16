@@ -4,6 +4,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Filters;
 using YouTube.AspNetCore.Tutorial.Basic.Generic_Repositories;
 using YouTube.AspNetCore.Tutorial.Basic.MapperApp;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
+using YouTube.AspNetCore.Tutorial.Basic.Services.UserService;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
 {
@@ -23,6 +24,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
 
             services.AddScoped(typeof(ParameterCheckFilter<,>));
 
+            services.AddScoped<IUserService, UserService>();
 
 
 
