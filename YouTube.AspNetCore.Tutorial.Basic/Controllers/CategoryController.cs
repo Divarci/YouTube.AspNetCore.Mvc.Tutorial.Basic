@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using YouTube.AspNetCore.Tutorial.Basic.Filters;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.CategoryVM;
@@ -6,9 +7,10 @@ using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
-        private readonly IGenericService<Category,CategoryListVM,CategoryCreateVM,CategoryUpdateVM> _repository;
+        private readonly IGenericService<Category, CategoryListVM, CategoryCreateVM, CategoryUpdateVM> _repository;
 
         public CategoryController(IGenericService<Category, CategoryListVM, CategoryCreateVM, CategoryUpdateVM> repository)
         {
@@ -38,7 +40,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return RedirectToAction("GetAllCategories", "Category");
         }
 
-        [ServiceFilter(typeof(ParameterCheckFilter<Category,CategoryUpdateVM>))]
+        [ServiceFilter(typeof(ParameterCheckFilter<Category, CategoryUpdateVM>))]
         [HttpGet]
         public IActionResult UpdateCategory(int id)
         {

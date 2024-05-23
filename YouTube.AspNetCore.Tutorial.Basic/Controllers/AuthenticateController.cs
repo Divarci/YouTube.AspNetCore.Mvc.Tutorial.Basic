@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.Models.Others;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.UserVM;
 using YouTube.AspNetCore.Tutorial.Basic.Services.UserService;
 
@@ -15,7 +16,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 
         [HttpGet]
         public IActionResult Register()
-        {            
+        {
             return View();
         }
         [HttpPost]
@@ -27,10 +28,22 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 
 
 
-
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(LoginVM request)
+        {
+            var result = _userService.SignIn(request.Email, request.Password);
+            if (!result)
+            {
+                ViewBag.Error = "Username or Password is incorrect !!";
+                return View();
+            }
+            return RedirectToAction("Index","Dashboard");
         }
     }
 }

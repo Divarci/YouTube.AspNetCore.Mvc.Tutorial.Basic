@@ -6,5 +6,6 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
     public interface IUserService : IGenericService<User,UserListVM,UserCreateVM,UserUpdateVM>
     {
         new void CreateItem(UserCreateVM request);
+        bool SignIn(string email, string propvidedPassword);
     }
 }

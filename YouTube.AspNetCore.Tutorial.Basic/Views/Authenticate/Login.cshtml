@@ -1,0 +1,26 @@
+﻿@model LoginVM
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+@if(ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+       @ViewBag.Error
+    </div>
+}
+
+<form asp-action="Login" asp-controller="Authenticate" method="post">
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Email" placeholder="Enter your email here">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>   
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Password" placeholder="Enter your password here">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>   
+    <button class="btn btn-outline-success">Login</button>
+</form>
+

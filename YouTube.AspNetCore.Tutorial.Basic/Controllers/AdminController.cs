@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
+    [Authorize]
     public class AdminController : Controller
     {
         public IActionResult UserList()
