@@ -20,18 +20,25 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
                 });
             }
 
-
-            else
+            if(exception is UserServiceExceptions)
             {
                 return View(new ErrorVM
                 {
-                    StatusCode = 500,
-                    Errors = new List<string> { "Inernal Server Error. Please speak with your advisor" }
+                    StatusCode = 400,
+                    Errors = new List<string> { exception.Message }
                 });
             }
 
 
+            return View(new ErrorVM
+            {
+                StatusCode = 500,
+                Errors = new List<string> { "Inernal Server Error. Please speak with your advisor" }
+            });
         }
+
+
+
         public IActionResult NotFoundPage()
         {
             return View();

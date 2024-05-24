@@ -28,7 +28,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item  ms-2">
-                                <a class="btn btn-outline-primary" asp-area="" asp-controller="Authenticated" asp-action="EditUser" asp-route-id="" >Edit User</a>
+                                <a class="btn btn-outline-primary" asp-area="" asp-controller="Authenticated" asp-action="EditUser" asp-route-id=@User.Claims.Where(x=>x.Type.Contains("identifier")).FirstOrDefault().Value>Edit User</a>
                             </li>
 
                             if (User.Claims.Any(x => x.Type == "Admin"))

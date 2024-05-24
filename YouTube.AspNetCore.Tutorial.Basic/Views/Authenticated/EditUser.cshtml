@@ -1,0 +1,33 @@
+﻿@model UserUpdateVM
+
+@{
+    ViewData["Title"] = "EditUser";
+}
+
+<h1>Edit User</h1>
+
+<form asp-action="EditUser" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Email" placeholder="Enter your email here">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Fullname" placeholder="Enter your Fulll Name here">
+        <span asp-validation-for="Fullname" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Password" placeholder="Enter your Existing Password here">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="NewPassword" placeholder="Enter New password here">
+        <span asp-validation-for="NewPassword" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="NewPasswordConfirm" placeholder="Confirm your new password">
+        <span asp-validation-for="NewPasswordConfirm" class="text-danger"></span>
+    </div>
+    <button class="btn btn-outline-success">Update</button>
+</form>
+

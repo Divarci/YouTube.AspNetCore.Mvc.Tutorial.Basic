@@ -47,7 +47,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return RedirectToAction("GetAllProducts", "Product");
         }
 
-        [ServiceFilter(typeof(ParameterCheckFilter<Category, ProductUpdateVM>))]
+        [ServiceFilter(typeof(ParameterCheckFilter<Product, ProductUpdateVM>))]
         [HttpGet]
         public IActionResult UpdateProduct(int id)
         {
@@ -57,7 +57,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return View(product);
         }
 
-        [ServiceFilter(typeof(ParameterCheckFilter<Category, ProductUpdateVM>))]
+        [ServiceFilter(typeof(ParameterCheckFilter<Product, ProductUpdateVM>))]
         [HttpPost]
         public IActionResult UpdateProduct(ProductUpdateVM request)
         {
@@ -71,7 +71,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return RedirectToAction("GetAllProducts", "Product");
         }
 
-        [ServiceFilter(typeof(ParameterCheckFilter<Category, ProductUpdateVM>))]
+        [ServiceFilter(typeof(ParameterCheckFilter<Product, ProductUpdateVM>))]
         public IActionResult DeleteProduct(int id)
         {
             _repository.DeleteItem(id);

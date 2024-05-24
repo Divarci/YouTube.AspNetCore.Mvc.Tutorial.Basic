@@ -7,5 +7,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
     {
         new void CreateItem(UserCreateVM request);
         bool SignIn(string email, string propvidedPassword);
+        void SignOut();
+        new void UpdateItem(UserUpdateVM request);
     }
 }
