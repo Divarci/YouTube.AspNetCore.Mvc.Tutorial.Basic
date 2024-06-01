@@ -13,6 +13,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
     public class UserService : GenericService<User, UserListVM, UserCreateVM, UserUpdateVM>, IUserService
     {
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IGenericRepository<Role> _roleRepository;
 
         public UserService(
             IGenericRepository<User> repository,
@@ -20,9 +21,11 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
             IMapper<UserCreateVM, User> createMapper,
             IMapper<UserUpdateVM, User> updateMapper,
             IMapper<User, UserUpdateVM> itemMapper,
-            IHttpContextAccessor contextAccessor) : base(repository, listMapper, createMapper, updateMapper, itemMapper)
+            IHttpContextAccessor contextAccessor,
+            IGenericRepository<Role> roleRepository) : base(repository, listMapper, createMapper, updateMapper, itemMapper)
         {
             _contextAccessor = contextAccessor;
+            _roleRepository = roleRepository;
         }
 
         public override void CreateItem(UserCreateVM request)
@@ -34,7 +37,27 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
             }
 
             var user = _CreateMapper.Map<UserCreateVM, User>(request);
-            user.PasswordHash = HashMaker(user, request.Password); _repository.CreateItem(user);
+            user.PasswordHash = HashMaker(user, request.Password);
+
+            var memberRole = _roleRepository.GetAll().FirstOrDefault(x => x.RoleName == "Member");
+            if (memberRole == null)
+            {
+                throw new ServerSideExceptions("Role not exist. Please speak your Admin");
+            };
+
+            var userRole = new UserRole()
+            {
+                RoleId = memberRole.Id,
+                UserId = user.Id,
+            };
+
+            if (user.UserRoles is null)
+            {
+                user.UserRoles = new List<UserRole>();
+            }
+
+            user.UserRoles.Add(userRole);
+            _repository.CreateItem(user);
 
         }
 
@@ -66,7 +89,11 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
                 new(ClaimTypes.NameIdentifier,user.Id.ToString())
             };
 
-            //add roles
+            foreach (var userRole in user.UserRoles)
+            {
+                var roleClaim = new Claim(ClaimTypes.Role, userRole.Role.RoleName);
+                claims.Add(roleClaim);
+            }
 
             var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             _contextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimIdentity));
@@ -93,8 +120,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
             }
 
             var mappedUser = _UpdateMapper.Map(request, user);
-            
-            if(request.NewPassword == null)
+
+            if (request.NewPassword == null)
             {
                 _repository.UpdateItem(mappedUser);
                 return;
@@ -105,7 +132,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
                 throw new UserServiceExceptions("New Password and New Password Confirm must be equal");
             }
 
-            var newPassworsHash = HashMaker(user,request.NewPassword);
+            var newPassworsHash = HashMaker(user, request.NewPassword);
             mappedUser.PasswordHash = newPassworsHash;
             _repository.UpdateItem(mappedUser);
 

@@ -1,0 +1,18 @@
+﻿@model RoleUpdateVM
+@{
+    ViewData["Title"] = "UpdateRole";
+}
+
+<h1>Update Role</h1>
+
+<form action="UpdateRole" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="RoleName" placeholder="Enter a Role name here">
+        <span asp-validation-for="RoleName" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-outline-success">Update</button>
+</form>
+
+
