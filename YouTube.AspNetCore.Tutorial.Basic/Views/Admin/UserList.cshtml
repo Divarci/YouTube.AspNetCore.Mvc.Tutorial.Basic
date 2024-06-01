@@ -1,0 +1,37 @@
+﻿@model List<UserListVM>
+@{
+    ViewData["Title"] = "UserList";
+}
+
+<h1>User List</h1>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">USER NAME</th>
+            <th scope="col">USER EMAiL</th>
+            <th scope="col">REMOVER USER</th>
+            <th scope="col">USER ROLES</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th scope="row">@item.Id</th>
+                <td>@item.Fullname</td>
+                <td>@item.Email</td>
+                <td>
+                    <a asp-controller="Admin" asp-action="RemoveUser" asp-route-id="@item.Id" class="btn btn-danger">Remove</a>
+                </td>
+                <td>
+                    <a asp-controller="Role" asp-action="GetAllRolesForUser" asp-route-id="@item.Id" class="btn btn-warning">Roles</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

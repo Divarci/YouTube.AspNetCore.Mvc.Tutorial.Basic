@@ -1,19 +1,32 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.Generic_Repositories;
+using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
+using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.UserVM;
+using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
     [Authorize]
     public class AdminController : Controller
     {
-        public IActionResult UserList()
+        private readonly IGenericService<User, UserListVM, UserCreateVM, UserUpdateVM> _userService;
+
+        public AdminController(IGenericService<User, UserListVM, UserCreateVM, UserUpdateVM> userService)
         {
-            return View();
+            _userService = userService;
         }
 
-        public IActionResult RemoveUser()
+        public IActionResult UserList()
         {
-            return View();
+            var userList = _userService.GetAllItems();
+            return View(userList);
+        }
+
+        public IActionResult RemoveUser(int id)
+        {
+            _userService.DeleteItem(id);
+            return RedirectToAction("UserList", "Admin");
         }
     }
 }
