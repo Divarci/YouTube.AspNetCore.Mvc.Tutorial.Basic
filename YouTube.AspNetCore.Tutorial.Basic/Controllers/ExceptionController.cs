@@ -19,8 +19,16 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
                     Errors = new List<string> { exception.Message }
                 });
             }
+            if (exception is ServerSideExceptions)
+            {
+                return View(new ErrorVM
+                {
+                    StatusCode = 500,
+                    Errors = new List<string> { exception.Message }
+                });
+            }
 
-            if(exception is UserServiceExceptions)
+            if (exception is UserServiceExceptions)
             {
                 return View(new ErrorVM
                 {
