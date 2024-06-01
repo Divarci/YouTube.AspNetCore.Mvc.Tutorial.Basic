@@ -9,6 +9,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Configuration
         public void Configure(EntityTypeBuilder<UserRole> builder)
         {
             builder.Navigation(x => x.Role).AutoInclude();
+            builder.Navigation(x => x.User).AutoInclude();
         }
     }
 }

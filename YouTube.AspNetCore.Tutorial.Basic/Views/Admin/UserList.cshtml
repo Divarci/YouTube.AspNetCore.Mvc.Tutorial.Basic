@@ -27,7 +27,7 @@
                     <a asp-controller="Admin" asp-action="RemoveUser" asp-route-id="@item.Id" class="btn btn-danger">Remove</a>
                 </td>
                 <td>
-                    <a asp-controller="Role" asp-action="GetAllRolesForUser" asp-route-id="@item.Id" class="btn btn-warning">Roles</a>
+                    <a asp-controller="UserRole" asp-action="GetUserRoles" asp-route-userId="@item.Id" class="btn btn-warning">Roles</a>
                 </td>
             </tr>
         }

@@ -1,0 +1,12 @@
+﻿@model UserRoleCreateVM
+
+<form asp-action="AddRoleToUser" asp-controller="UserRole" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <div class="mb-3">
+        <select asp-for="RoleId" asp-items="@(new SelectList(ViewBag.Roles,"Id","RoleName"))" class="form-control dropdown"></select>
+        <span asp-validation-for="RoleId" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-outline-success">Role Add</button>
+</form>
+
