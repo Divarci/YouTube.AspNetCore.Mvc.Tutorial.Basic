@@ -1,126 +1,97 @@
-﻿using Azure.Core;
-using Elfie.Serialization;
-using System.Reflection;
+﻿using System.Collections;
+using YouTube.AspNetCore.Tutorial.Basic.Exceptions;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.MapperApp
 {
-    public class Mapper<EntityIn, EntityOut> : IMapper<EntityIn, EntityOut>
-        where EntityIn : class
-        where EntityOut : class
+    public class Mapper : IMapper
     {
-        public Destination Map<Source, Destination>(Source request) // source is IEnumerable<Category>
+        private const string Collection = "Collection";
+        private const string SingleUnit = "SingleUnit";
+
+        public Destination Map<Source, Destination>(Source request, int depth)
         {
-            var isCollection = typeof(Source).GetInterfaces().Any(x => x.Name.Contains("ICollection"));
-            if(isCollection)
-            {
-                var sourceList = (ICollection<EntityIn>)request!;
+            if (request is null) throw new MapperException("Mapper source can not be null");
+            
 
-                var destinationObject = Activator.CreateInstance(typeof(Destination));
-                var destinationList = (ICollection<EntityOut>)destinationObject!;                            
-
-                foreach (var item in sourceList)
-                {
-                    var destinationOutObject = MapObject(typeof(EntityIn), item,null, typeof(EntityOut));
-                    destinationList.Add((EntityOut)destinationOutObject!);
-                }
-
-                return (Destination)destinationList;
-            }
-
-            var destination = MapObject(typeof(EntityIn), request,null, typeof(EntityOut));
-
+            var destination = MapObject(typeof(Source), request, null, typeof(Destination),depth,null);
             return (Destination)destination!;
         }
 
-        public Destination Map<Source, Destination>(Source request,Destination outcome) // source is IEnumerable<Category>
+        public Destination Map<Source, Destination>(Source request, Destination outcome,int depth)
         {
-            var isCollection = typeof(Source).GetInterfaces().Any(x => x.Name.Contains("ICollection"));
+            if (request is null) throw new MapperException("Mapper source can not be null");
+            if (outcome is null) throw new MapperException("Mapper destination can not be null");
+
+            var destination = MapObject(typeof(Source), request, outcome, typeof(Destination), depth,null);
+            return (Destination)destination!;
+        }
+
+        private object MapObject(Type sourceType, object source, object? outcome, Type destinationType,int depth,string? previousProcess)
+        {
+            if(source is null) throw new MapperException("Mapper source can not be null");
+            if (depth <= 0) return null;
+            if (previousProcess is Collection) depth++;
+
+            var isCollection = typeof(IEnumerable).IsAssignableFrom(sourceType) && sourceType != typeof(string);
             if (isCollection)
             {
-                var sourceList = (ICollection<EntityIn>)request!;
-
-                var destinationObject = Activator.CreateInstance(typeof(Destination));
-                var destinationList = (ICollection<EntityOut>)destinationObject!;
-
-                foreach (var item in sourceList)
-                {
-                    var destinationOutObject = MapObject(typeof(EntityIn),item, outcome, typeof(EntityOut));
-                    destinationList.Add((EntityOut)destinationOutObject!);
-                }
-
-                return (Destination)destinationList;
+                return CollectionMapper(source, outcome, destinationType, ref depth);
             }
 
-            var destination = MapObject(typeof(EntityIn), request, outcome, typeof(EntityOut));
+            return SingleUnitMapper(sourceType, source, outcome, destinationType, ref depth);
 
-            return (Destination)destination!;
         }
 
-        private object MapObject(Type entityIn,object source,object? outcome, Type entityOut)
-        {    
+        private object SingleUnitMapper(Type sourceType, object source, object? outcome, Type destinationType,ref int depth)
+        {
+            var sourceProperties = sourceType.GetProperties().ToDictionary(p => p.Name);
+            var destinationProperties = destinationType.GetProperties();
 
-            if(outcome == null)
+            var destination = outcome ?? Activator.CreateInstance(destinationType);
+            foreach (var destinationProperty in destinationProperties)
             {
-                PropertyInfo[] sourceProperties = entityIn.GetProperties();
-                PropertyInfo[] destinationProperties = entityOut.GetProperties();
+                if (!sourceProperties.TryGetValue(destinationProperty.Name, out var sourceProperty))
+                    continue;
 
-                var destination = Activator.CreateInstance(entityOut);
-                foreach (var propertyOut in destinationProperties)
+                if (destinationProperty.PropertyType.IsClass && destinationProperty.PropertyType != typeof(string))
                 {
-                    foreach (var propertyIn in sourceProperties)
-                    {
-                        if (propertyOut.Name == propertyIn.Name && propertyOut.PropertyType.IsClass && propertyOut.PropertyType != typeof(string))
-                        {
-                            var nestedValue = propertyIn.GetValue(source);
-                            var subDestination = MapObject(propertyIn.PropertyType, nestedValue,null, propertyOut.PropertyType);
-                            propertyOut.SetValue(destination, subDestination);
-                            break;
-                        }
-
-
-                        if (propertyOut.Name == propertyIn.Name && propertyOut.PropertyType == propertyIn.PropertyType)
-                        {
-                            var value = propertyIn.GetValue(source);
-                            propertyOut.SetValue(destination, value);
-                            break;
-                        }
-                    }
+                    var nestedValue = sourceProperty.GetValue(source);
+                    depth--;
+                    var subDestination = MapObject(sourceProperty.PropertyType, nestedValue, outcome, destinationProperty.PropertyType,depth,SingleUnit);
+                    depth++;
+                    destinationProperty.SetValue(destination, subDestination);
+                    continue;
                 }
-                return destination!;
+
+                if (destinationProperty.PropertyType == sourceProperty.PropertyType)
+                {
+                    var value = sourceProperty.GetValue(source);
+                    destinationProperty.SetValue(destination, value);
+                    continue;
+                }
             }
-            else
+            return destination!;
+        }
+
+        private object CollectionMapper(object source, object? outcome, Type destinationType,ref int depth)
+        {
+            if (source is not IEnumerable sourceList)
+                throw new MapperException($"Source object of type is not an IEnumerable");
+
+            var destinationObject = Activator.CreateInstance(destinationType);
+            var destinationList = (IList)destinationObject!;
+
+            var typeOfDestinationObject = destinationType.GetGenericArguments()[0];
+
+            foreach (var item in sourceList)
             {
-                PropertyInfo[] sourceProperties = entityIn.GetProperties();
-                PropertyInfo[] destinationProperties = entityOut.GetProperties();
-
-                var destination = outcome;
-                foreach (var propertyOut in destinationProperties)
-                {
-                    foreach (var propertyIn in sourceProperties)
-                    {
-                        if (propertyOut.Name == propertyIn.Name && propertyOut.PropertyType.IsClass && propertyOut.PropertyType != typeof(string))
-                        {
-                            var nestedValue = propertyIn.GetValue(source);
-                            var subDestination = MapObject(propertyIn.PropertyType, nestedValue, destination, propertyOut.PropertyType);
-                            propertyOut.SetValue(destination, subDestination);
-                            break;
-                        }
-
-
-                        if (propertyOut.Name == propertyIn.Name && propertyOut.PropertyType == propertyIn.PropertyType)
-                        {
-                            var value = propertyIn.GetValue(source);
-                            propertyOut.SetValue(destination, value);
-                            break;
-                        }
-                    }
-                }
-                return destination!;
+                depth--;
+                var destinationOutObject = MapObject(item.GetType(), item, outcome, typeOfDestinationObject,depth,Collection);
+                depth++;
+                destinationList.Add(destinationOutObject);
             }
-
-           
-
-            
+            return destinationList;
         }
     }
 }
+

@@ -12,28 +12,17 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services
         where TUpdateVM : class
     {
         protected readonly IGenericRepository<TEntity> _repository;
-        protected readonly IMapper<TEntity, TListVM> _listMapper;
-        protected readonly IMapper<TCreateVM, TEntity> _CreateMapper;
-        protected readonly IMapper<TUpdateVM, TEntity> _UpdateMapper;
-        protected readonly IMapper<TEntity, TUpdateVM> _itemMapper;
+        protected readonly IMapper _mapper;
 
-        public GenericService(
-            IGenericRepository<TEntity> repository,
-            IMapper<TEntity, TListVM> listMapper,
-            IMapper<TCreateVM, TEntity> createMapper,
-            IMapper<TUpdateVM, TEntity> updateMapper,
-            IMapper<TEntity, TUpdateVM> itemMapper)
+        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
-            _listMapper = listMapper;
-            _CreateMapper = createMapper;
-            _UpdateMapper = updateMapper;
-            _itemMapper = itemMapper;
+            _mapper = mapper;
         }
 
         public virtual void CreateItem(TCreateVM request)
         {
-            var entity = _CreateMapper.Map<TCreateVM,TEntity>(request);
+            var entity = _mapper.Map<TCreateVM,TEntity>(request,3);
             _repository.CreateItem(entity);
         }
 
@@ -55,20 +44,20 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services
                     //GetALl().Include(x=>x.Properties).Include(x=>x.ProductFeatures)
                 }
             }
-            var itemListVM = _listMapper.Map<IList<TEntity>, List<TListVM>>(items.ToList());
+            var itemListVM = _mapper.Map<IList<TEntity>, List<TListVM>>(items.ToList(),3);
             return itemListVM;
         }
 
         public virtual TUpdateVM GetItemById(int id)
         {
             var item = _repository.GetItemById(id);
-            var updateItem = _itemMapper.Map<TEntity, TUpdateVM>(item);
+            var updateItem = _mapper.Map<TEntity, TUpdateVM>(item, 3);
             return updateItem;
         }
 
         public virtual void UpdateItem(TUpdateVM request)
         {
-            var entity = _UpdateMapper.Map<TUpdateVM,TEntity>(request);
+            var entity = _mapper.Map<TUpdateVM,TEntity>(request,3);
             _repository.UpdateItem(entity);
         }
     }

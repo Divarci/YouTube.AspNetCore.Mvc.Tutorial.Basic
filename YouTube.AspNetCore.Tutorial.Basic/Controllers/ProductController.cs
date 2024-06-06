@@ -8,7 +8,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Member,Admin")]
     public class ProductController : Controller
     {
         private readonly IGenericService<Product, ProductListVM,ProductCreateVM,ProductUpdateVM> _repository;

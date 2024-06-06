@@ -8,7 +8,5 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.UserVM
         public string Fullname { get; set; }
         public string Password { get; set; }
         public string PasswordConfirm { get; set; }
-
-        public ICollection<UserRole> UserRoles { get; set; }
     }
 }

@@ -21,8 +21,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
-            services.AddScoped(typeof(IMapper<,>), typeof(Mapper<,>));
 
+            services.AddScoped<IMapper, Mapper>();
             services.AddScoped(typeof(ParameterCheckFilter<,>));
 
             services.AddScoped<IUserService, UserService>();
@@ -38,7 +38,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.LoginPath = "/Authenticate/Login";
                 options.LogoutPath = "/Authenticated/Logout";
-                //options.AccessDeniedPath = "";
+                options.AccessDeniedPath = "/Exception/AccessDenied";
                 options.Cookie = newCookie;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
             });

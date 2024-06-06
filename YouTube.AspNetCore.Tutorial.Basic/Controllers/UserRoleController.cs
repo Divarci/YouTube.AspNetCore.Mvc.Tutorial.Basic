@@ -10,14 +10,14 @@ using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class UserRoleController : Controller
     {
         private readonly IGenericService<UserRole, UserRoleListVM, UserRoleCreateVM, UserRoleUpdateVM> _userRoleService;
         private readonly IGenericService<Role, RoleListVM, RoleCreateVM, RoleUpdateVM> _roleService;
-        private readonly IGenericService<User, User, UserCreateVM, UserUpdateVM> _userService;
+        private readonly IGenericService<User, UserListVM, UserCreateVM, UserUpdateVM> _userService;
 
-        public UserRoleController(IGenericService<UserRole, UserRoleListVM, UserRoleCreateVM, UserRoleUpdateVM> userRoleService, IGenericService<Role, RoleListVM, RoleCreateVM, RoleUpdateVM> roleService, IGenericService<User, User, UserCreateVM, UserUpdateVM> userService)
+        public UserRoleController(IGenericService<UserRole, UserRoleListVM, UserRoleCreateVM, UserRoleUpdateVM> userRoleService, IGenericService<Role, RoleListVM, RoleCreateVM, RoleUpdateVM> roleService, IGenericService<User, UserListVM, UserCreateVM, UserUpdateVM> userService)
         {
             _userRoleService = userRoleService;
             _roleService = roleService;

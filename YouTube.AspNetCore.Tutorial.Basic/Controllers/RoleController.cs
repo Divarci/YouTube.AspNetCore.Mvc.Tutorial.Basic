@@ -6,7 +6,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize]
+    [Authorize(Roles="Admin")]
     public class RoleController : Controller
     {
         private readonly IGenericService<Role, RoleListVM, RoleCreateVM, RoleUpdateVM> _roleService;

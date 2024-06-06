@@ -15,14 +15,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IGenericRepository<Role> _roleRepository;
 
-        public UserService(
-            IGenericRepository<User> repository,
-            IMapper<User, UserListVM> listMapper,
-            IMapper<UserCreateVM, User> createMapper,
-            IMapper<UserUpdateVM, User> updateMapper,
-            IMapper<User, UserUpdateVM> itemMapper,
-            IHttpContextAccessor contextAccessor,
-            IGenericRepository<Role> roleRepository) : base(repository, listMapper, createMapper, updateMapper, itemMapper)
+        public UserService(IGenericRepository<User> repository, IMapper mapper, IHttpContextAccessor contextAccessor, IGenericRepository<Role> roleRepository) : base(repository, mapper)
         {
             _contextAccessor = contextAccessor;
             _roleRepository = roleRepository;
@@ -36,7 +29,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
                 throw new UserServiceExceptions("Password and Password Confirm must be equal");
             }
 
-            var user = _CreateMapper.Map<UserCreateVM, User>(request);
+            var user = _mapper.Map<UserCreateVM, User>(request, 3);
             user.PasswordHash = HashMaker(user, request.Password);
 
             var memberRole = _roleRepository.GetAll().FirstOrDefault(x => x.RoleName == "Member");
@@ -107,7 +100,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
 
         public override void UpdateItem(UserUpdateVM request)
         {
-            var user = _repository.GetAll().Where(x => x.Email == request.Email).FirstOrDefault();
+            var user = _repository.GetAll().Where(x => x.Id == request.Id).FirstOrDefault();
             if (user == null)
             {
                 throw new UserServiceExceptions("Email or Password error");
@@ -119,7 +112,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Services.UserService
                 throw new UserServiceExceptions("Email or Password error");
             }
 
-            var mappedUser = _UpdateMapper.Map(request, user);
+            var mappedUser = _mapper.Map(request, user,3);
 
             if (request.NewPassword == null)
             {

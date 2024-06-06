@@ -37,6 +37,15 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
                 });
             }
 
+            if (exception is MapperException)
+            {
+                return View(new ErrorVM
+                {
+                    StatusCode = 401,
+                    Errors = new List<string> { exception.Message }
+                });
+            }
+
 
             return View(new ErrorVM
             {
@@ -45,9 +54,12 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             });
         }
 
-
-
         public IActionResult NotFoundPage()
+        {
+            return View();
+        }
+
+        public IActionResult AccessDenied()
         {
             return View();
         }

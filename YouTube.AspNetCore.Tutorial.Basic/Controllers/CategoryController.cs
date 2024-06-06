@@ -7,7 +7,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Member,Admin")]
     public class CategoryController : Controller
     {
         private readonly IGenericService<Category, CategoryListVM, CategoryCreateVM, CategoryUpdateVM> _repository;

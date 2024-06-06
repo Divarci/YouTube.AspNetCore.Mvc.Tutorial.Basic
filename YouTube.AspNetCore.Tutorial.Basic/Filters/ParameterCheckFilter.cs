@@ -4,7 +4,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Generic_Repositories;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Filters
 {
-    public class ParameterCheckFilter<TEntity,TUpdateVM> : IActionFilter
+    public class ParameterCheckFilter<TEntity, TUpdateVM> : IActionFilter
         where TEntity : class
         where TUpdateVM : class
     {
@@ -17,7 +17,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-           
+
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
@@ -26,13 +26,6 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
             if (value == null)
             {
                 throw new ClientSideExceptions("Parameter can not be null");
-            }
-
-            var controllerName = context.Controller.GetType().Name.Replace("Controller", "");
-            var sourceEntityname = typeof(TEntity).Name;
-            if(controllerName != sourceEntityname)
-            {
-                throw new ClientSideExceptions("Source Entity is wrong, Please check your filter parameters");
             }
 
             var intCheck = int.TryParse(value.ToString(), out var intValue);
@@ -53,9 +46,9 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
             }
 
             var type = value.GetType();
-            var id = type.GetProperties().FirstOrDefault(x=>x.Name == "Id");
+            var id = type.GetProperties().FirstOrDefault(x => x.Name == "Id");
             var idValue = id.GetValue(value);
-            if (idValue==null)
+            if (idValue == null)
             {
                 throw new ClientSideExceptions("Property Name or Value is invalid");
             }
@@ -76,7 +69,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Filters
                 idList.Add((int)tempIdValue);
             }
 
-            if (!idList.Any(x=>x == idValueInt))
+            if (!idList.Any(x => x == idValueInt))
             {
                 throw new ClientSideExceptions("Item Not Found");
             }

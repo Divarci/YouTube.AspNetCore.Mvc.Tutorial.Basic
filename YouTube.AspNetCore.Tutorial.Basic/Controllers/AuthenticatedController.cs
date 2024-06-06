@@ -5,7 +5,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Services.UserService;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Member,Admin")]
     public class AuthenticatedController : Controller
     {
         private readonly IUserService _userService;
