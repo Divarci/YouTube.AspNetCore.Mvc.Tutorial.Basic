@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using YouTube.AspNetCore.Tutorial.Basic.DynamicAuth;
+using YouTube.AspNetCore.Tutorial.Basic.Filters;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.RoleVM;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.UserRoleVM;
@@ -10,7 +12,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [DynamicAuthorization]
     public class UserRoleController : Controller
     {
         private readonly IGenericService<UserRole, UserRoleListVM, UserRoleCreateVM, UserRoleUpdateVM> _userRoleService;
@@ -45,6 +47,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return View(userRoles);
         }
 
+
         [HttpPost]
         public IActionResult AddRoleToUser(UserRoleCreateVM request)
         {
@@ -52,6 +55,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return RedirectToAction("GetUserRoles", "UserRole", new { userId = request.UserId });
         }
 
+
+        [ServiceFilter(typeof(ParameterCheckFilter<UserRole, UserRoleUpdateVM>))]
         public IActionResult RemoveRoleFromUser(int id, int userId)
         {
             var user = _userService.GetAllItems().FirstOrDefault(x => x.Id == userId);

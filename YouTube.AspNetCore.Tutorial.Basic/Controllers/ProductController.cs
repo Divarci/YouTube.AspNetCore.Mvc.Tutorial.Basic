@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.DynamicAuth;
 using YouTube.AspNetCore.Tutorial.Basic.Filters;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.CategoryVM;
@@ -8,7 +9,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize(Roles = "Member,Admin")]
+    [DynamicAuthorization]
     public class ProductController : Controller
     {
         private readonly IGenericService<Product, ProductListVM,ProductCreateVM,ProductUpdateVM> _repository;

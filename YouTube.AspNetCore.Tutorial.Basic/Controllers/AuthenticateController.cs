@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.DynamicAuth;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Others;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.UserVM;
 using YouTube.AspNetCore.Tutorial.Basic.Services.UserService;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
+    [DynamicAuthorization]
     public class AuthenticateController : Controller
     {
         private readonly IUserService _userService;

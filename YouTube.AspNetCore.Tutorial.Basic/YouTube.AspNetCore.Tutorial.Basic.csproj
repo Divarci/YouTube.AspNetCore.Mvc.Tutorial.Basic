@@ -16,4 +16,13 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\ValidationModels\DomainValidation\" />
+    <Folder Include="Models\ValidationModels\LoginValidation\" />
+    <Folder Include="Models\ValidationModels\UserValidation\" />
+    <Folder Include="Models\ValidationModels\UserRoleValidation\" />
+    <Folder Include="Models\ValidationModels\RoleValidation\" />
+    <Folder Include="Models\ValidationModels\RegisterValidation\" />
+  </ItemGroup>
+
 </Project>

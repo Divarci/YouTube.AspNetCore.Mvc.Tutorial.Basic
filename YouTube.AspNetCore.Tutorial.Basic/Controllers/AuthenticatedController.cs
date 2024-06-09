@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.DynamicAuth;
+using YouTube.AspNetCore.Tutorial.Basic.Filters;
+using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.UserVM;
 using YouTube.AspNetCore.Tutorial.Basic.Services.UserService;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize(Roles ="Member,Admin")]
+    [DynamicAuthorization]
     public class AuthenticatedController : Controller
     {
         private readonly IUserService _userService;
@@ -15,6 +18,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             _userService = userService;
         }
 
+
+        [ServiceFilter(typeof(ParameterCheckFilter<User, UserUpdateVM>))]
         [HttpGet]
         public IActionResult EditUser(int id)
         {
@@ -22,6 +27,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return View(user);
         }
 
+
+        [ServiceFilter(typeof(ParameterCheckFilter<User, UserUpdateVM>))]
         [HttpPost]
         public IActionResult EditUser(UserUpdateVM request)
         {

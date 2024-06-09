@@ -6,5 +6,7 @@
         public string RoleName { get; set; }
 
         public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<Domain> Domain { get; set; }
+
     }
 }

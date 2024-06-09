@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.DynamicAuth;
 using YouTube.AspNetCore.Tutorial.Basic.Exceptions;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Others;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
+    [DynamicAuthorization]
     public class ExceptionController : Controller
     {
         public IActionResult HandleExceptions()

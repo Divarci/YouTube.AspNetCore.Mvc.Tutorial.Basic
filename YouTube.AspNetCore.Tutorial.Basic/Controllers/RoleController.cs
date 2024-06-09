@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.DynamicAuth;
+using YouTube.AspNetCore.Tutorial.Basic.Filters;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.RoleVM;
+using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.UserVM;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 {
-    [Authorize(Roles="Admin")]
+    [DynamicAuthorization]
     public class RoleController : Controller
     {
         private readonly IGenericService<Role, RoleListVM, RoleCreateVM, RoleUpdateVM> _roleService;
@@ -35,6 +38,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return RedirectToAction("GetAllRoles", "Role");
         }
 
+
+        [ServiceFilter(typeof(ParameterCheckFilter<Role, RoleUpdateVM>))]
         [HttpGet]
         public IActionResult UpdateRole(int id)
         {
@@ -42,6 +47,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return View(role);
         }
 
+
+        [ServiceFilter(typeof(ParameterCheckFilter<Role, RoleUpdateVM>))]
         [HttpPost]
         public IActionResult UpdateRole(RoleUpdateVM request)
         {
@@ -49,6 +56,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
             return RedirectToAction("GetAllRoles", "Role");
         }
 
+
+        [ServiceFilter(typeof(ParameterCheckFilter<Role, RoleUpdateVM>))]
         public IActionResult DeleteRole(int id)
         {
             _roleService.DeleteItem(id);

@@ -1,0 +1,45 @@
+﻿@model DomainListWithParamsVM
+
+@{
+    ViewData["Title"] = "GetAllDomainsByControllerNameId";
+}
+
+
+<h1>@Model.ControllerParams.ControllerName</h1>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">ROLE NAME</th>
+            <th scope="col">MANIPULATION</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DomainList)
+        {
+            <tr>
+                <td>@item.Role.RoleName</td>
+                <td>
+                    <a asp-controller="Domain" asp-action="UpdateDomainRoleForController"
+                       asp-route-controllerName="@Model.ControllerParams.ControllerName"
+                       asp-route-controllerId="@Model.ControllerParams.ControllerId"
+                       asp-route-id="@item.Id"
+                       class="btn btn-warning">Edit</a>
+
+                    <a asp-controller="Domain" asp-action="RemoveDomainRoleFromController"
+                       asp-route-controllerName="@Model.ControllerParams.ControllerName"
+                       asp-route-controllerId="@Model.ControllerParams.ControllerId"
+                       asp-route-id="@item.Id"
+                       class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-controller="Domain" asp-action="AddDomainRoleToController"
+   asp-route-controllerName="@Model.ControllerParams.ControllerName"
+   asp-route-controllerId="@Model.ControllerParams.ControllerId"
+   class="btn btn-primary">Add Domain Role</a>
+
+<a asp-controller="ControllerName" asp-action="GetAllControllerList" class="btn btn-warning">Back</a>
