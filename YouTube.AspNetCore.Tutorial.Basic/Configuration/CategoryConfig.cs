@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Configuration

@@ -12,8 +12,8 @@ using YouTube.AspNetCore.Tutorial.Basic.Context;
 namespace YouTube.AspNetCore.Tutorial.Basic.Migrations
 {
     [DbContext(typeof(CustomContext))]
-    [Migration("20240609195239_DynamicAuthAddition")]
-    partial class DynamicAuthAddition
+    [Migration("20240713150548_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,63 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ControllerNames");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Authenticate"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Dashboard"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "ControllerName"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Authenticated"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Category"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Domain"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Exception"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Product"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Role"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "UserRole"
+                        });
                 });
 
             modelBuilder.Entity("YouTube.AspNetCore.Tutorial.Basic.Models.Entity.Domain", b =>
@@ -87,6 +144,98 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Domains");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ControllerNameId = 1,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ControllerNameId = 2,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ControllerNameId = 3,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ControllerNameId = 8,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ControllerNameId = 4,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ControllerNameId = 5,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ControllerNameId = 6,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ControllerNameId = 7,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ControllerNameId = 10,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ControllerNameId = 11,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ControllerNameId = 2,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ControllerNameId = 9,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ControllerNameId = 5,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ControllerNameId = 6,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ControllerNameId = 9,
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("YouTube.AspNetCore.Tutorial.Basic.Models.Entity.Product", b =>
@@ -181,6 +330,23 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RoleName = "Public"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            RoleName = "Member"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            RoleName = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("YouTube.AspNetCore.Tutorial.Basic.Models.Entity.User", b =>
@@ -206,6 +372,22 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "testadmin@gmail.com",
+                            Fullname = "TestAdmin",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDZ67fm99um8gIy1DvA2jHPot3l5w37lO+VuId7v1rccwRUqij8rCz2GjAffK8LGfA=="
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "testmember@gmail.com",
+                            Fullname = "TestMember",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGLz4H894z/hrqr3jlzXm8zCVFWW4DsQSNvdiKZGV20GSyscLGM7WJ1ZffN7dS2fxA=="
+                        });
                 });
 
             modelBuilder.Entity("YouTube.AspNetCore.Tutorial.Basic.Models.Entity.UserRole", b =>
@@ -229,6 +411,38 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RoleId = 3,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            RoleId = 1,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            RoleId = 2,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            RoleId = 1,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            RoleId = 2,
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("YouTube.AspNetCore.Tutorial.Basic.Models.Entity.Domain", b =>
