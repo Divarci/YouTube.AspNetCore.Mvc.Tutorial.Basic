@@ -1,0 +1,38 @@
+﻿@using YouTube.AspNetCore.Tutorial.Basic.Models.Dto.InvoiceApiDto.ClientDto
+@model List<ClientDto>
+@{
+    ViewData["Title"] = "GetAllClients";
+}
+
+<h1>Client List</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">COMPANY NAME</th>
+            <th scope="col">OWNER</th>
+            <th scope="col">ADDRESS</th>
+            <th scope="col">PHONE</th>
+            <th scope="col">ACTIONS</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th scope="row">@item.Id</th>
+                <td>@item.CompanyName</td>
+                <td>@item.Owner</td>
+                <td>@item.Address</td>
+                <td>@item.Phone</td>
+                <td>
+                    <a asp-controller="Client" asp-action="UpdateClient" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                    <a asp-controller="Client" asp-action="RemoveClient" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-controller="Client" asp-action="CreateClient" class="btn btn-success">Create New Client</a>
+

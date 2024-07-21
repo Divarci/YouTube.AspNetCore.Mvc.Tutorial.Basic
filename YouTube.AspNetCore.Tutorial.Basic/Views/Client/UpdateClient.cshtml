@@ -1,0 +1,31 @@
+﻿@using YouTube.AspNetCore.Tutorial.Basic.Models.Dto.InvoiceApiDto.ClientDto
+@model ClientUpdateDto
+@{
+    ViewData["Title"] = "UpdateClient";
+}
+
+<h1>Update Client</h1>
+
+<form action="UpdateClient" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="CompanyName" placeholder="Enter a Company name here">
+        <span asp-validation-for="CompanyName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Owner" placeholder="Enter a Owner name here">
+        <span asp-validation-for="Owner" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" asp-for="Address" placeholder="Enter a Address here">
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input type="number" class="form-control" asp-for="Phone" placeholder="Enter a Phone number here">
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-outline-success">Update</button>
+</form>
+
+

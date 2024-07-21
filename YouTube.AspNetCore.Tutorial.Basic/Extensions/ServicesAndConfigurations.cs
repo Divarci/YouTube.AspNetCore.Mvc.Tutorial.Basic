@@ -7,6 +7,7 @@ using YouTube.AspNetCore.Tutorial.Basic.MapperApp;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
 using YouTube.AspNetCore.Tutorial.Basic.Services.ControllerNameService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.DomainService;
+using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.ClientService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.UserService;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
@@ -47,7 +48,10 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
             });
 
-
+            services.AddHttpClient<IClientService, ClientService>(opt =>
+            {
+                opt.BaseAddress = new Uri("https://localhost:7110/");
+            });
 
             return services;
         }
