@@ -1,0 +1,41 @@
+﻿@using YouTube.AspNetCore.Tutorial.Basic.Models.Dto.InvoiceApiDto.InvoiceDto
+@model List<InvoiceDto>
+
+@{
+    ViewData["Title"] = "GetAllInvoicesForCompany";
+}
+
+<h1>@Model.FirstOrDefault()?.Client.CompanyName Invoice List</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">NO</th>
+            <th scope="col">ISSUED DATE</th>
+            <th scope="col">PO NUMBER</th>
+            <th scope="col">NET</th>
+            <th scope="col">VAT</th>
+            <th scope="col">TOTAL</th>
+            <th scope="col">ACTIONS</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th scope="row">@item.Id</th>
+                <td>@item.InvoiceDate</td>
+                <td>@item.PONumber</td>
+                <td>@item.Total</td>
+                <td>@item.Vat</td>
+                <td>@item.GrandTotal</td>
+                <td>
+                    <a asp-controller="Invoice" asp-action="ViewInvoice" asp-route-id="@item.Id" class="btn btn-warning">View</a>
+                    <a asp-controller="Invoice" asp-action="RemoveInvoice" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-controller="Invoice" asp-action="CreateInvoice" class="btn btn-success">Create New Invoice</a>
+

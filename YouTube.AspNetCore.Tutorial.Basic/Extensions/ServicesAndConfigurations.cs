@@ -8,6 +8,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Services;
 using YouTube.AspNetCore.Tutorial.Basic.Services.ControllerNameService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.DomainService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.ClientService;
+using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.InvoiceService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.UserService;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
@@ -49,6 +50,11 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
             });
 
             services.AddHttpClient<IClientService, ClientService>(opt =>
+            {
+                opt.BaseAddress = new Uri("https://localhost:7110/");
+            });
+
+            services.AddHttpClient<IInvoiceService, InvoiceService>(opt =>
             {
                 opt.BaseAddress = new Uri("https://localhost:7110/");
             });

@@ -17,14 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Dto\InvoiceApiDto\InvoiceItemDto\" />
     <Folder Include="Models\ValidationModels\DomainValidation\" />
     <Folder Include="Models\ValidationModels\LoginValidation\" />
     <Folder Include="Models\ValidationModels\UserValidation\" />
     <Folder Include="Models\ValidationModels\UserRoleValidation\" />
     <Folder Include="Models\ValidationModels\RoleValidation\" />
     <Folder Include="Models\ValidationModels\RegisterValidation\" />
-    <Folder Include="Services\InvoiceApiServices\InvoiceService\" />
   </ItemGroup>
 
 </Project>

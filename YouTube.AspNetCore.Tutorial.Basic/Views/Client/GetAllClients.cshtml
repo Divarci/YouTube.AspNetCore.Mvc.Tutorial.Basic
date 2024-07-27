@@ -14,6 +14,7 @@
             <th scope="col">OWNER</th>
             <th scope="col">ADDRESS</th>
             <th scope="col">PHONE</th>
+            <th scope="col">INVOICES</th>
             <th scope="col">ACTIONS</th>
         </tr>
     </thead>
@@ -26,6 +27,15 @@
                 <td>@item.Owner</td>
                 <td>@item.Address</td>
                 <td>@item.Phone</td>
+                <td>@if (item.Invoices.Any())
+                    {
+                        <a asp-controller="Invoice" asp-action="GetAllInvoicesForCompany" asp-route-id="@item.Id" class="btn btn-primary">Invoice List</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Invoice" asp-action="CreateInvoice" asp-route-id="@item.Id" class="btn btn-outline-success">Create Invoice</a>
+                    }
+                </td>
                 <td>
                     <a asp-controller="Client" asp-action="UpdateClient" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
                     <a asp-controller="Client" asp-action="RemoveClient" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
