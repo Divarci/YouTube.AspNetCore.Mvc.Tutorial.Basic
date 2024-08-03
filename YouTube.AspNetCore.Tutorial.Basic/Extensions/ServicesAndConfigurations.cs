@@ -59,6 +59,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
                 opt.BaseAddress = new Uri("https://localhost:7110/");
             });
 
+            services.AddMemoryCache();
+
             return services;
         }
     }

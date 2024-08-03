@@ -1,0 +1,81 @@
+﻿@model InvoiceCreateDto
+@{
+    ViewData["Title"] = "CreateInvoiceForCompany";
+}
+
+<h1>Create Invoice</h1>
+
+<form id="ItemAdd" method="post">
+    <div class="mb-3">
+        <label class="form-label">Product List</label>
+        <select class="form-select" id="ProductSelect">
+            <option value="" selected>Select an Item</option>
+            @foreach (var product in (List<ProductListVM>)ViewBag.ProductList)
+            {
+                <option value="@product.Id">@product.Name</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+       <label class="form-label">Quantity</label>
+       <input type="number" class="form-control" id="Quantity" />
+    </div>
+
+    <button type="button" id="AddProductButton" class="btn btn-success">Add Product</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">PRODUCT NAME</th>
+            <th scope="col">QUANTITY</th>
+            <th scope="col">PRICE</th>
+            <th scope="col">NET AMOUNT</th>
+            <th scope="col">TAX AMOUNT</th>
+            <th scope="col">TOTAL AMOUNT</th>
+            <th scope="col">ACTIONS</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.InvoiceItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>@(item.Price * item.Quantity)</td>
+                <td>@(item.Price * item.Quantity * 0.20m)</td>
+                <td>@((item.Price * item.Quantity * 0.20m) + (item.Price * item.Quantity))</td>
+                <td>
+                    <a href="#" class="btn btn-primary">Remove Item</a> <--!--> we will add rhis command later</>
+                </td>
+               
+            </tr>
+        }
+    </tbody>
+</table>
+<a href="#" class="btn btn-success">Create</a>
+<a href="#" class="btn btn-success">Delete</a>
+
+<script>
+    $(document).ready(function () {
+        $('#AddProductButton').on('click', function () {
+
+            let productId = $('#ProductSelect').val();
+            let quantity = $('#Quantity').val();
+
+            $.ajax({
+                url: `/Invoice/AddproductToList?productId=${productId}&quantity=${quantity}&clientId=${@Model.ClientId}`,
+                type: 'GET',
+                success: function (response) {
+                    location.reload();
+                }
+            })
+
+        })
+
+
+
+
+    });
+</script>
