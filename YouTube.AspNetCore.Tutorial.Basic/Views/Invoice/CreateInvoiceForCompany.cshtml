@@ -17,11 +17,16 @@
         </select>
     </div>
     <div class="mb-3">
-       <label class="form-label">Quantity</label>
-       <input type="number" class="form-control" id="Quantity" />
+        <label class="form-label">Quantity</label>
+        <input type="number" class="form-control" id="Quantity" />
+    </div>
+    <div class="d-flex justify-content-between">
+        <div>
+            <input class="form-control" asp-for="PONumber" type="text" id="PoNumber" placeholder="PO NUmber" />
+        </div>
+        <button type="button" id="AddProductButton" class="btn btn-success">Add Product</button>
     </div>
 
-    <button type="button" id="AddProductButton" class="btn btn-success">Add Product</button>
 </form>
 
 <table class="table table-striped">
@@ -47,9 +52,12 @@
                 <td>@(item.Price * item.Quantity * 0.20m)</td>
                 <td>@((item.Price * item.Quantity * 0.20m) + (item.Price * item.Quantity))</td>
                 <td>
-                    <a href="#" class="btn btn-primary">Remove Item</a> <--!--> we will add rhis command later</>
+                    <button class="removeButton btn btn-primary"
+                            data-index="@Model.InvoiceItems.FindIndex(x => x.Quantity == item.Quantity && x.Name == item.Name)">
+                        Remove Item
+                    </button>
                 </td>
-               
+
             </tr>
         }
     </tbody>
@@ -63,18 +71,32 @@
 
             let productId = $('#ProductSelect').val();
             let quantity = $('#Quantity').val();
+            let poNumber = $('#PoNumber').val();
 
             $.ajax({
-                url: `/Invoice/AddproductToList?productId=${productId}&quantity=${quantity}&clientId=${@Model.ClientId}`,
+                url: `/Invoice/AddproductToList?productId=${productId}&quantity=${quantity}&clientId=@Model.ClientId&poNumber=${poNumber}`,
                 type: 'GET',
                 success: function (response) {
-                    location.reload();
+                    window.location.href = `/Invoice/CreateInvoiceForCompany?clientId=@Model.ClientId`;
                 }
             })
 
         })
 
+        $('.removeButton').on('click', function () {
 
+            let poNumber = $('#PoNumber').val();           
+            let index = $(this).data('index')
+
+            $.ajax({
+                url: `/Invoice/RemoveProductFromList?index=${index}&clientId=@Model.ClientId&poNumber=${poNumber}`,
+                type: 'GET',
+                success: function (response) {
+                    window.location.href = `/Invoice/CreateInvoiceForCompany?clientId=@Model.ClientId`;
+                }
+            })
+
+        })
 
 
     });
