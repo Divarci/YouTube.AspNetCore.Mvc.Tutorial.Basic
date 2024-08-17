@@ -1,0 +1,137 @@
+﻿@model InvoiceUpdateForRemoveItemsDto
+
+@{
+    ViewData["Title"] = "ViewOrEditInvoice";
+}
+
+<h1>@(ViewBag.IsView ? "View Invoice" : "Edit Invoice")</h1>
+
+<h3>@Model.PONumber</h3>
+
+@if (ViewBag.IsView is false)
+{
+    <form id="ItemAdd" method="post">
+        <div class="mb-3">
+            <label class="form-label">Product List</label>
+            <select class="form-select" id="ProductSelect">
+                <option value="" selected>Select an Item</option>
+                @foreach (var product in (List<ProductListVM>)ViewBag.ProductList)
+                {
+                    <option value="@product.Id">@product.Name</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="Quantity" />
+        </div>
+        <div class="d-flex justify-content-between">
+            <div class="mb-3">
+                <input type="text" class="form-control" asp-for="PONumber" id="PONumber" placeholder="PO Number" />
+            </div>
+            <button type="button" id="UpdateProductButton" class="btn btn-success">Add Product</button>
+        </div>
+    </form>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">PRODUCT NAME</th>
+            <th scope="col">QUANTITY</th>
+            <th scope="col">PRICE</th>
+            <th scope="col">NET AMOUNT</th>
+            <th scope="col">TAX AMOUNT</th>
+            <th scope="col">TOTAL AMOUNT</th>
+            @if (ViewBag.IsView is false)
+            {
+                <th scope="col">ACTIONS</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.InvoiceItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>@(item.Price * item.Quantity)</td>
+                <td>@(item.Price * item.Quantity * 0.20m)</td>
+                <td>@((item.Price * item.Quantity * 0.20m) + (item.Price * item.Quantity))</td>
+                @if (ViewBag.IsView is false)
+                {
+                    <td>
+                        <button data-index="@Model.InvoiceItems.FindIndex(x=>x.Name==item.Name && x.Quantity==item.Quantity)" type="button" class="removeProduct btn btn-warning">Remove Product</button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+@if (ViewBag.IsView is false)
+{
+    <button type="button" id="UpdateInvoiceButton" class="btn btn-success">Update</button>
+    <a type="button" asp-action="CancelAction" asp-controller="Invoice" asp-route-id="@Model.ClientId" asp-route-cacheKey="invoiceUpdate" class="btn btn-success">Cancel</a>
+}
+else
+{
+    <a asp-controller="Invoice" asp-action="ViewOrEditInvoice" asp-route-id="@Model.ClientId" asp-route-isView="@false" class="btn btn-warning">View</a>
+}
+
+<script>
+    $(document).ready(function () {
+
+        $('#UpdateProductButton').on('click', function () {
+
+            let productId = $('#ProductSelect').val();
+            let quantity = $('#Quantity').val();
+            let poNumber = $('#PONumber').val();
+
+            $.ajax({
+                url: `/Invoice/AddproductToListForUpdate?productId=${productId}&quantity=${quantity}&id=@Model.ClientId&poNumber=${poNumber}`,
+                type: 'GET',
+                success: function (response) {
+                    sessionStorage.setItem("invoiceUpdate", JSON.stringify(response));
+                    window.location.href = `/Invoice/ViewOrEditInvoice?id=@Model.ClientId&isView=false`
+                }
+            })
+
+        })
+
+        $('#UpdateInvoiceButton').on('click', function () {
+            var invoiceData = sessionStorage.getItem("invoiceUpdate");
+
+            if (invoiceData) {
+                var parsedInvoiceData = JSON.parse(invoiceData);
+                console.log(parsedInvoiceData);
+
+                $.ajax({
+                    url: `/Invoice/SendInvoiceToApiForUpdate`,
+                    type: 'POST',
+                    data: parsedInvoiceData,
+                    success: function (response) {
+                        window.location.href = `/Invoice/GetAllInvoicesForCompany?id=@Model.ClientId`
+                    }
+                })
+            }
+            else {
+                console.log("No Invoice Data");
+            }
+
+        })
+
+        $('.removeProduct').on('click', function () {
+            let poNumber = $('#PONumber').val();
+            var dataIndex = $(this).data('index');
+            $.ajax({
+                url: `/Invoice/RemoveProductFromUpdateList?index=${dataIndex}`,
+                type: 'GET',
+                success: function (response) {
+                    sessionStorage.setItem("invoiceUpdate", JSON.stringify(response));
+                    window.location.href = `/Invoice/ViewOrEditInvoice?id=@Model.ClientId&poNumber=${poNumber}&isView=false`
+                }
+            });
+        })
+    });
+</script>

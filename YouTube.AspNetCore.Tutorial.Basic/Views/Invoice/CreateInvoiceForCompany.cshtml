@@ -1,6 +1,6 @@
 ﻿@model InvoiceCreateDto
 @{
-    ViewData["Title"] = "CreateInvoiceForCompany";
+    ViewData["Title"] = "CreateInvoiceForCompany";   
 }
 
 <h1>Create Invoice</h1>
@@ -17,11 +17,15 @@
         </select>
     </div>
     <div class="mb-3">
-       <label class="form-label">Quantity</label>
-       <input type="number" class="form-control" id="Quantity" />
+        <label class="form-label">Quantity</label>
+        <input type="number" class="form-control" id="Quantity" />
     </div>
-
-    <button type="button" id="AddProductButton" class="btn btn-success">Add Product</button>
+    <div class="d-flex justify-content-between">
+        <div class="mb-3">
+            <input type="text" class="form-control" asp-for="PONumber" id="PONumber" placeholder="PO Number" />
+        </div>
+        <button type="button" id="AddProductButton" class="btn btn-success">Add Product</button>
+    </div>
 </form>
 
 <table class="table table-striped">
@@ -47,34 +51,62 @@
                 <td>@(item.Price * item.Quantity * 0.20m)</td>
                 <td>@((item.Price * item.Quantity * 0.20m) + (item.Price * item.Quantity))</td>
                 <td>
-                    <a href="#" class="btn btn-primary">Remove Item</a> <--!--> we will add rhis command later</>
+                    <a type="button"
+                        asp-action="RemoveProductFromList" 
+                        asp-controller="Invoice" 
+                        asp-route-index="@Model.InvoiceItems.FindIndex(x=>x.Name==item.Name && x.Quantity==item.Quantity)" 
+                        class="btn btn-warning">Remove Product
+                    </a>
                 </td>
-               
+
             </tr>
         }
     </tbody>
 </table>
-<a href="#" class="btn btn-success">Create</a>
-<a href="#" class="btn btn-success">Delete</a>
+<button type="button" id="CreateInvoiceButton" class="btn btn-success">Create</button>
+<a type="button" asp-action="CancelAction" asp-controller="Invoice" asp-route-id="@Model.ClientId" asp-route-cacheKey="InvoiceDraftList" class="btn btn-success">Cancel</a>
 
 <script>
     $(document).ready(function () {
+
         $('#AddProductButton').on('click', function () {
 
             let productId = $('#ProductSelect').val();
             let quantity = $('#Quantity').val();
+            let poNumber = $('#PONumber').val();
 
             $.ajax({
-                url: `/Invoice/AddproductToList?productId=${productId}&quantity=${quantity}&clientId=${@Model.ClientId}`,
+                url: `/Invoice/AddproductToList?productId=${productId}&quantity=${quantity}&id=@Model.ClientId&poNumber=${poNumber}`,
                 type: 'GET',
                 success: function (response) {
-                    location.reload();
+                    sessionStorage.setItem("invoice", JSON.stringify(response));
+                    window.location.href = `/Invoice/CreateInvoiceForCompany?id=@Model.ClientId`
                 }
             })
 
         })
 
+        $('#CreateInvoiceButton').on('click', function () {
+            var invoiceData = sessionStorage.getItem("invoice");
 
+            if (invoiceData) {
+                var parsedInvoiceData = JSON.parse(invoiceData);
+                let poNumber = $('#PONumber').val();
+                parsedInvoiceData.poNumber = poNumber;
+                $.ajax({
+                    url: `/Invoice/SendInvoiceToApi`,
+                    type: 'POST',
+                    data: parsedInvoiceData,
+                    success: function (response) {
+                        window.location.href = `/Invoice/GetAllInvoicesForCompany?id=@Model.ClientId`
+                    }
+                })
+            }
+            else {
+                console.log("No Invoice Data");
+            }
+
+        })
 
 
     });

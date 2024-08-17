@@ -30,12 +30,12 @@
                 <td>@item.Vat</td>
                 <td>@item.GrandTotal</td>
                 <td>
-                    <a asp-controller="Invoice" asp-action="ViewInvoice" asp-route-id="@item.Id" class="btn btn-warning">View</a>
-                    <a asp-controller="Invoice" asp-action="RemoveInvoice" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    <a asp-controller="Invoice" asp-action="ViewOrEditInvoice" asp-route-id="@item.Id" asp-route-isView="@true" class="btn btn-warning">View</a>
+                    <a asp-controller="Invoice" asp-action="RemoveInvoice" asp-route-id="@item.Id" asp-route-clientId="@item.ClientId" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<a asp-controller="Invoice" asp-action="CreateInvoice" class="btn btn-success">Create New Invoice</a>
+<a asp-controller="Invoice" asp-action="CreateInvoiceForCompany" asp-route-id="@Model.FirstOrDefault()!.ClientId" class="btn btn-success">Create New Invoice</a>
 
