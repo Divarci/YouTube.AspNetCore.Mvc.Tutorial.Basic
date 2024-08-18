@@ -1,0 +1,125 @@
+﻿@model InvoiceUpdateForRemoveItemsDto
+
+@{
+    ViewData["Title"] = "ViewEditInvoiceForCompany";
+}
+@if (ViewBag.Action == "Edit")
+{
+    <h1>Edit Invoice</h1>
+}
+else
+{
+    <h1>View Invoice</h1>
+}
+
+
+@if (ViewBag.Action == "Edit")
+{
+    <form id="ItemAdd" method="post">
+        <div class="mb-3">
+            <label class="form-label">Product List</label>
+            <select class="form-select" id="ProductSelect">
+                <option value="" selected>Select an Item</option>
+                @foreach (var product in (List<ProductListVM>)ViewBag.ProductList)
+                {
+                    <option value="@product.Id">@product.Name</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="Quantity" />
+        </div>
+        <div class="d-flex justify-content-between">
+            <div>
+                <input class="form-control" asp-for="PONumber" type="text" id="PoNumber" placeholder="PO NUmber" />
+            </div>
+            <button type="button" id="AddProductButton" class="btn btn-success">Add Product</button>
+        </div>
+    </form>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">PRODUCT NAME</th>
+            <th scope="col">QUANTITY</th>
+            <th scope="col">PRICE</th>
+            <th scope="col">NET AMOUNT</th>
+            <th scope="col">TAX AMOUNT</th>
+            <th scope="col">TOTAL AMOUNT</th>
+            @if (ViewBag.Action == "Edit")
+            {
+                <th scope="col">ACTIONS</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.InvoiceItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>@(item.Price * item.Quantity)</td>
+                <td>@(item.Price * item.Quantity * 0.20m)</td>
+                <td>@((item.Price * item.Quantity * 0.20m) + (item.Price * item.Quantity))</td>
+                @if (ViewBag.Action == "Edit")
+                {
+                    <td>
+                        <button class="removeButton btn btn-primary"
+                                data-index="@Model.InvoiceItems.FindIndex(x => x.Quantity == item.Quantity && x.Name == item.Name)">
+                            Remove Item
+                        </button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.Action == "Edit")
+{
+    <a asp-action="SendInvoiceToApiForUpdate" asp-controller="Invoice" asp-route-cacheKey="InvoiceUpdateDraft-@Model.Id" class="btn btn-success">Update</a>
+    <a asp-action="DeleteDraftInvoice" asp-controller="Invoice" asp-route-cacheKey="InvoiceUpdateDraft-@Model.Id" asp-route-clientId="@Model.ClientId" class="btn btn-success">Delete</a>
+
+}
+else
+{
+    <a asp-controller="Invoice" asp-action="ViewEditInvoiceForCompany" asp-route-id="@Model.Id" asp-route-invoiceStatus="Edit" class="btn btn-warning">Edit</a>
+}
+
+<script>
+    $(document).ready(function () {
+        $('#AddProductButton').on('click', function () {
+
+            let productId = $('#ProductSelect').val();
+            let quantity = $('#Quantity').val();
+            let poNumber = $('#PoNumber').val();
+
+            $.ajax({
+                url: `/Invoice/AddProductToListForUpdate?productId=${productId}&quantity=${quantity}&clientId=@Model.ClientId&poNumber=${poNumber}&invoiceId=@Model.Id`,
+                type: 'GET',
+                success: function (response) {
+                    window.location.href = `/Invoice/ViewEditInvoiceForCompany?id=@Model.Id&invoiceStatus=Edit`;
+                }
+            })
+
+        })
+
+        $('.removeButton').on('click', function () {
+
+            let poNumber = $('#PoNumber').val();
+            let index = $(this).data('index')
+
+            $.ajax({
+                url: `/Invoice/RemoveProductFromListForUpdate?index=${index}&clientId=@Model.ClientId&poNumber=${poNumber}&invoiceId=@Model.Id`,
+                type: 'GET',
+                success: function (response) {
+                    window.location.href = `/Invoice/ViewEditInvoiceForCompany?id=@Model.Id&invoiceStatus=Edit`;
+                }
+            })
+
+        })
+            });
+</script>

@@ -31,8 +31,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
 
         [HttpGet]
         public IActionResult CreateInvoiceForCompany(int clientId)
-        {            
-            ViewBag.ProductList = _productService.GetAllItems(x=>x.Category).ToList();
+        {
+            ViewBag.ProductList = _productService.GetAllItems(x => x.Category).ToList();
             string cacheKey = $"InvoiceCreateDraft-{clientId}";
             //check true false oprions
             var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceCreateDto? cachedInvoice);
@@ -45,7 +45,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
         [HttpGet]
         public IActionResult AddproductToList(int productId, int quantity, int clientId, string poNumber)
         {
-            var product = _productService.GetAllItems(x=>x.Category).FirstOrDefault(x=>x.Id == productId);
+            var product = _productService.GetAllItems(x => x.Category).FirstOrDefault(x => x.Id == productId);
             if (product is null)
             {
                 //throw error
@@ -95,7 +95,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SendInvoiceToApi(string cacheKey) 
+        public async Task<IActionResult> SendInvoiceToApi(string cacheKey)
         {
             var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceCreateDto? cachedInvoice);
             if (!result || cachedInvoice is null)
@@ -103,6 +103,8 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
 
             cachedInvoice.InvoiceDate = DateTime.Now;
             var resultApiRequest = await _invoiceService.CreateInvoiceAsync(cachedInvoice); // we can return a success message
+
+            _memoeryCache.Remove(cacheKey);
             return RedirectToAction("GetAllInvoicesForCompany", "Invoice", new { clientId = cachedInvoice.ClientId });
         }
 
@@ -112,13 +114,111 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
             _memoeryCache.Remove(cacheKey);
 
             var invoices = await _invoiceService.GetAllInvoicesByCompanyIdAsync(clientId);
-            if(invoices.Count == 0)
+            if (invoices.Count == 0)
                 return RedirectToAction("GetAllClients", "Client");
 
             return RedirectToAction("GetAllInvoicesForCompany", "Invoice", new { clientId });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ViewEditInvoiceForCompany(int id, string invoiceStatus)
+        {
+            if (invoiceStatus == "Edit")
+            {
+                ViewBag.ProductList = _productService.GetAllItems(x => x.Category).ToList();
+                ViewBag.Action = invoiceStatus;
+                string cacheKey = $"InvoiceUpdateDraft-{id}";
+
+                var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceUpdateForRemoveItemsDto? cachedInvoice);
+                if (cachedInvoice is null)
+                    cachedInvoice = await _invoiceService.GetInvoiceByIdAsync(id);
+
+                return View(cachedInvoice);
+            }
+
+            var viewData = await _invoiceService.GetInvoiceByIdAsync(id);
+            ViewBag.Action = invoiceStatus;
+            return View(viewData);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddProductToListForUpdate(int productId, int quantity, int clientId, string poNumber, int invoiceId)
+        {
+            var product = _productService.GetAllItems(x => x.Category).FirstOrDefault(x => x.Id == productId);
+            if (product is null)
+            {
+                //throw error
+            }
+
+            var invoiceItem = new InvoiceItemUpdateDto
+            {
+                Name = product.Name,
+                Price = product.Price,
+                Quantity = quantity,
+            };
+
+            string cacheKey = $"InvoiceUpdateDraft-{invoiceId}";
+
+            var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceUpdateForRemoveItemsDto? cachedInvoice);
+            if (cachedInvoice is null)
+                cachedInvoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
 
 
+
+            cachedInvoice.InvoiceItems.Add(invoiceItem);
+            cachedInvoice.PONumber = poNumber;
+
+            _memoeryCache.Set(cacheKey, cachedInvoice, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+            });
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveProductFromListForUpdate(int index, int clientId, string poNumber, int invoiceId)
+        {
+            string cacheKey = $"InvoiceUpdateDraft-{invoiceId}";
+            var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceUpdateForRemoveItemsDto? cachedInvoice);
+            if (cachedInvoice is null)
+                cachedInvoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+
+            cachedInvoice.InvoiceItems.RemoveAt(index);
+            cachedInvoice.PONumber = poNumber;
+
+            _memoeryCache.Set(cacheKey, cachedInvoice, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+            });
+
+            return Json(true);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> SendInvoiceToApiForUpdate(string cacheKey)
+        {
+            var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceUpdateForRemoveItemsDto? cachedInvoice);
+            if (!result || cachedInvoice is null)
+                throw new Exception();
+
+            await _invoiceService.UpdateInvoiceAsync(cachedInvoice); // we can return a success message
+
+            _memoeryCache.Remove(cacheKey);
+            return RedirectToAction("GetAllInvoicesForCompany", "Invoice", new { clientId = cachedInvoice.ClientId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveInvoice(int id, int clientId)
+        {
+            await _invoiceService.RemoveInvoiceAsync(id);
+            var invoices = await _invoiceService.GetAllInvoicesByCompanyIdAsync(clientId);
+            if(invoices.Count == 0)
+                return RedirectToAction("GetAllClients", "Client");
+
+            return RedirectToAction("GetAllInvoicesForCompany", "Invoice", new { clientId });
+        }
     }
 }
