@@ -62,8 +62,8 @@
         }
     </tbody>
 </table>
-<a href="#" class="btn btn-success">Create</a>
-<a href="#" class="btn btn-success">Delete</a>
+<a asp-action="SendInvoiceToApi" asp-controller="Invoice" asp-route-cacheKey="InvoiceCreateDraft-@Model.ClientId" class="btn btn-success">Create</a>
+<a asp-action="DeleteDraftInvoice" asp-controller="Invoice" asp-route-cacheKey="InvoiceCreateDraft-@Model.ClientId" asp-route-clientId="@Model.ClientId" class="btn btn-success">Delete</a>
 
 <script>
     $(document).ready(function () {

@@ -29,7 +29,7 @@
                 <td>@item.Phone</td>
                 <td>@if (item.Invoices.Any())
                     {
-                        <a asp-controller="Invoice" asp-action="GetAllInvoicesForCompany" asp-route-id="@item.Id" class="btn btn-primary">Invoice List</a>
+                        <a asp-controller="Invoice" asp-action="GetAllInvoicesForCompany" asp-route-clientId="@item.Id" class="btn btn-primary">Invoice List</a>
                     }
                     else
                     {
