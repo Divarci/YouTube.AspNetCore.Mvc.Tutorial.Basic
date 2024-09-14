@@ -5,6 +5,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Models.Dto.InvoiceApiDto.InvoiceItemsDto
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.ProductVM;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
+using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.CachedOperationsService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.InvoiceService;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
@@ -14,12 +15,14 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
         private readonly IInvoiceService _invoiceService;
         private readonly IGenericService<Product, ProductListVM, ProductCreateVM, ProductUpdateVM> _productService;
         private readonly IMemoryCache _memoeryCache;
+        private readonly ICachedOperationsService _cachedData;
 
-        public InvoiceController(IInvoiceService invoiceService, IGenericService<Product, ProductListVM, ProductCreateVM, ProductUpdateVM> productService, IMemoryCache memoeryCache)
+        public InvoiceController(IInvoiceService invoiceService, IGenericService<Product, ProductListVM, ProductCreateVM, ProductUpdateVM> productService, IMemoryCache memoeryCache, ICachedOperationsService cachedData)
         {
             _invoiceService = invoiceService;
             _productService = productService;
             _memoeryCache = memoeryCache;
+            _cachedData = cachedData;
         }
 
         [HttpGet]
@@ -33,87 +36,41 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
         public IActionResult CreateInvoiceForCompany(int clientId)
         {
             ViewBag.ProductList = _productService.GetAllItems(x => x.Category).ToList();
-            string cacheKey = $"InvoiceCreateDraft-{clientId}";
-            //check true false oprions
-            var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceCreateDto? cachedInvoice);
-            if (cachedInvoice is null)
-                cachedInvoice = new() { ClientId = clientId, InvoiceItems = [] };
-
+            var cachedInvoice = _cachedData.CreateInvoiceForCompany(clientId);
             return View(cachedInvoice);
         }
 
         [HttpGet]
         public IActionResult AddproductToList(int productId, int quantity, int clientId, string poNumber)
         {
-            var product = _productService.GetAllItems(x => x.Category).FirstOrDefault(x => x.Id == productId);
-            if (product is null)
-            {
-                //throw error
-            }
-
-            var invoiceItem = new InvoiceItemCreateDto
-            {
-                Name = product.Name,
-                Price = product.Price,
-                Quantity = quantity,
-            };
-
-            string cacheKey = $"InvoiceCreateDraft-{clientId}";
-
-            var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceCreateDto? cachedInvoice);
-            if (cachedInvoice is null)
-                cachedInvoice = new() { ClientId = clientId, InvoiceItems = [] };
-
-            cachedInvoice.InvoiceItems.Add(invoiceItem);
-            cachedInvoice.PONumber = poNumber;
-
-            _memoeryCache.Set(cacheKey, cachedInvoice, new MemoryCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
-            });
-
-            return Json(true);
+            var result = _cachedData.AddProductToList(productId, quantity, clientId, poNumber);
+            return Json(result);
         }
 
         [HttpGet]
         public IActionResult RemoveProductFromList(int index, int clientId, string poNumber)
         {
-            string cacheKey = $"InvoiceCreateDraft-{clientId}";
-            var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceCreateDto? cachedInvoice);
-            if (cachedInvoice is null)
-                throw new Exception();
-
-            cachedInvoice.InvoiceItems.RemoveAt(index);
-            cachedInvoice.PONumber = poNumber;
-
-            _memoeryCache.Set(cacheKey, cachedInvoice, new MemoryCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
-            });
-
-            return Json(true);
+            var result = _cachedData.RemoveProductFromList(index, clientId, poNumber);
+            return Json(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> SendInvoiceToApi(string cacheKey)
         {
-            var result = _memoeryCache.TryGetValue(cacheKey, out InvoiceCreateDto? cachedInvoice);
-            if (!result || cachedInvoice is null)
-                throw new Exception();
-
-            cachedInvoice.InvoiceDate = DateTime.Now;
-            var resultApiRequest = await _invoiceService.CreateInvoiceAsync(cachedInvoice); // we can return a success message
-
-            _memoeryCache.Remove(cacheKey);
-            return RedirectToAction("GetAllInvoicesForCompany", "Invoice", new { clientId = cachedInvoice.ClientId });
+            var result = await _cachedData.SendInvoiceToApiAsync(cacheKey);
+            // we can return a success message add toastr message result.message
+            return RedirectToAction("GetAllInvoicesForCompany", "Invoice", new { result.clientId });
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteDraftInvoice(string cacheKey, int clientId)
         {
-            _memoeryCache.Remove(cacheKey);
+            var result = _cachedData.DeleteDraftInvoice(cacheKey, clientId);
 
             var invoices = await _invoiceService.GetAllInvoicesByCompanyIdAsync(clientId);
+
+            // we can return a success message add toastr message result
+
             if (invoices.Count == 0)
                 return RedirectToAction("GetAllClients", "Client");
 
@@ -215,7 +172,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
         {
             await _invoiceService.RemoveInvoiceAsync(id);
             var invoices = await _invoiceService.GetAllInvoicesByCompanyIdAsync(clientId);
-            if(invoices.Count == 0)
+            if (invoices.Count == 0)
                 return RedirectToAction("GetAllClients", "Client");
 
             return RedirectToAction("GetAllInvoicesForCompany", "Invoice", new { clientId });

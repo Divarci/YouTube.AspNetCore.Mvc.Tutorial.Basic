@@ -7,6 +7,8 @@ using YouTube.AspNetCore.Tutorial.Basic.MapperApp;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
 using YouTube.AspNetCore.Tutorial.Basic.Services.ControllerNameService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.DomainService;
+using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.CachedOperationsService;
+using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.CachedOperationsServices;
 using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.ClientService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.InvoiceService;
 using YouTube.AspNetCore.Tutorial.Basic.Services.UserService;
@@ -30,6 +32,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Extensions
             services.AddScoped(typeof(ParameterCheckFilter<,>));
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICachedOperationsService, CachedOperationService>();
             services.AddScoped<IDomainService, DomainService>();
             services.AddScoped<IControllerNameService, ControllerNameService>();
 

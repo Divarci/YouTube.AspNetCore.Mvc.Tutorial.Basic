@@ -77,7 +77,15 @@
                 url: `/Invoice/AddproductToList?productId=${productId}&quantity=${quantity}&clientId=@Model.ClientId&poNumber=${poNumber}`,
                 type: 'GET',
                 success: function (response) {
-                    window.location.href = `/Invoice/CreateInvoiceForCompany?clientId=@Model.ClientId`;
+                    if (response === "") {
+                        window.location.href = `/Invoice/CreateInvoiceForCompany?clientId=@Model.ClientId`;
+                    }
+                    else{
+                        console.log(response);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
                 }
             })
 
@@ -85,14 +93,23 @@
 
         $('.removeButton').on('click', function () {
 
-            let poNumber = $('#PoNumber').val();           
+            let poNumber = $('#PoNumber').val();
             let index = $(this).data('index')
 
             $.ajax({
                 url: `/Invoice/RemoveProductFromList?index=${index}&clientId=@Model.ClientId&poNumber=${poNumber}`,
                 type: 'GET',
                 success: function (response) {
-                    window.location.href = `/Invoice/CreateInvoiceForCompany?clientId=@Model.ClientId`;
+                    if (response === "") {
+                        window.location.href = `/Invoice/CreateInvoiceForCompany?clientId=@Model.ClientId`;
+                    }
+                    else {
+                        console.log(response);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Internal server error");
+                    console.log(xhr.responseText);
                 }
             })
 
