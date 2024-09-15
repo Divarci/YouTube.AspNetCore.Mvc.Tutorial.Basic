@@ -101,7 +101,16 @@ else
                 url: `/Invoice/AddProductToListForUpdate?productId=${productId}&quantity=${quantity}&clientId=@Model.ClientId&poNumber=${poNumber}&invoiceId=@Model.Id`,
                 type: 'GET',
                 success: function (response) {
-                    window.location.href = `/Invoice/ViewEditInvoiceForCompany?id=@Model.Id&invoiceStatus=Edit`;
+                    if (response === "") {
+                        window.location.href = `/Invoice/ViewEditInvoiceForCompany?id=@Model.Id&invoiceStatus=Edit`;
+                    }
+                    else {
+                        console.log(response);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Internal server error");
+                    console.log(xhr.responseText);
                 }
             })
 
@@ -116,10 +125,19 @@ else
                 url: `/Invoice/RemoveProductFromListForUpdate?index=${index}&clientId=@Model.ClientId&poNumber=${poNumber}&invoiceId=@Model.Id`,
                 type: 'GET',
                 success: function (response) {
-                    window.location.href = `/Invoice/ViewEditInvoiceForCompany?id=@Model.Id&invoiceStatus=Edit`;
+                    if (response === "") {
+                        window.location.href = `/Invoice/ViewEditInvoiceForCompany?id=@Model.Id&invoiceStatus=Edit`;
+                    }
+                    else {
+                        console.log(response);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Internal server error");
+                    console.log(xhr.responseText);
                 }
             })
 
         })
-            });
+    });
 </script>

@@ -9,4 +9,8 @@ public interface ICachedOperationsService
     public string RemoveProductFromList(int index, int clientId, string poNumber);
     Task<(string message, int clientId)> SendInvoiceToApiAsync(string cacheKey);
     string DeleteDraftInvoice(string cacheKey, int clientId);
+    Task<InvoiceUpdateForRemoveItemsDto> ViewEditInvoiceForCompanyAsync(int id);
+    Task<string> AddProductToListForUpdateAsync(int productId, int quantity, int clientId, string poNumber, int invoiceId);
+    Task<string> RemoveProductFromListForUpdateAsync(int index, int clientId, string poNumber, int invoiceId);
+    Task<int> SendInvoiceToApiForUpdateAsync(string cacheKey);
 }

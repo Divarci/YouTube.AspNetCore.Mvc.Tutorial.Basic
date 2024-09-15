@@ -103,4 +103,76 @@ public class CachedOperationService : ICachedOperationsService
         return "Draft invoice is deleted";
     }
 
+    public async Task<InvoiceUpdateForRemoveItemsDto> ViewEditInvoiceForCompanyAsync(int id)
+    {
+        string cacheKey = $"InvoiceUpdateDraft-{id}";
+
+        _memoryCache.TryGetValue(cacheKey, out InvoiceUpdateForRemoveItemsDto? cachedInvoice);
+
+        if (cachedInvoice is null)
+            cachedInvoice = await _invoiceService.GetInvoiceByIdAsync(id);
+
+        return cachedInvoice;
+    }
+
+    public async Task<string> AddProductToListForUpdateAsync(int productId, int quantity, int clientId, string poNumber, int invoiceId)
+    {
+        var product = _productService.GetAllItems(x => x.Category).FirstOrDefault(x => x.Id == productId);
+        if (product == null)
+            return "Product with given Id is not exist";
+
+        var invoiceItem = new InvoiceItemUpdateDto
+        {
+            Name = product.Name,
+            Price = product.Price,
+            Quantity = quantity,
+        };
+
+        string cacheKey = $"InvoiceUpdateDraft-{invoiceId}";
+
+        _memoryCache.TryGetValue(cacheKey, out InvoiceUpdateForRemoveItemsDto? cachedInvoice);
+
+        if (cachedInvoice is null)
+            cachedInvoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+
+        cachedInvoice.InvoiceItems.Add(invoiceItem);
+        cachedInvoice.PONumber = poNumber;
+
+        _memoryCache.Set(cacheKey, cachedInvoice, new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+        });
+
+        return string.Empty;
+    }
+
+    public async Task<string> RemoveProductFromListForUpdateAsync(int index, int clientId, string poNumber, int invoiceId)
+    {
+        string cacheKey = $"InvoiceUpdateDraft-{invoiceId}";
+        var result = _memoryCache.TryGetValue(cacheKey, out InvoiceUpdateForRemoveItemsDto? cachedInvoice);
+        if (cachedInvoice is null)
+            cachedInvoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+
+        cachedInvoice.InvoiceItems.RemoveAt(index);
+        cachedInvoice.PONumber = poNumber;
+
+        _memoryCache.Set(cacheKey, cachedInvoice, new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+        });
+
+        return string.Empty;
+    }
+
+    public async Task<int> SendInvoiceToApiForUpdateAsync(string cacheKey)
+    {
+        var result = _memoryCache.TryGetValue(cacheKey, out InvoiceUpdateForRemoveItemsDto? cachedInvoice);
+        if (!result || cachedInvoice is null)
+            throw new ServerSideExceptions("Cached data can not be null");
+
+        await _invoiceService.UpdateInvoiceAsync(cachedInvoice);
+        _memoryCache.Remove(cacheKey);
+        return cachedInvoice.ClientId;
+    }
+    
 }
