@@ -5,10 +5,10 @@
 
 <h1>Login</h1>
 
-@if(ViewBag.Error != null)
+@if (!string.IsNullOrEmpty(ViewBag.Error))
 {
     <div class="alert alert-danger" role="alert">
-       @ViewBag.Error
+        @ViewBag.Error
     </div>
 }
 

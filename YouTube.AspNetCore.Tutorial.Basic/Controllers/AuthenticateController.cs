@@ -31,8 +31,9 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
 
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string? error = null)
         {
+            ViewBag.Error = error;
             return View();
         }
 
@@ -45,7 +46,7 @@ namespace YouTube.AspNetCore.Tutorial.Basic.Controllers
                 ViewBag.Error = "Username or Password is incorrect !!";
                 return View();
             }
-            return RedirectToAction("Index","Dashboard");
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }

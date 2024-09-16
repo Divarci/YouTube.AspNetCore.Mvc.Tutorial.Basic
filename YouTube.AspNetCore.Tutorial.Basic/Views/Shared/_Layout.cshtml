@@ -32,6 +32,9 @@
                             <li class="nav-item  ms-2">
                                 <a class="btn btn-outline-primary" asp-area="" asp-controller="Authenticated" asp-action="EditUser" asp-route-id=@User.Claims.Where(x=>x.Type.Contains("identifier")).FirstOrDefault().Value>Edit User</a>
                             </li>
+                            <li class="nav-item  ms-2">
+                                <a class="btn btn-secondary" asp-area="" asp-controller="Client" asp-action="GetAllClients" >Client List</a>
+                            </li>
 
                             if (User.Claims.Any(x => x.Value == "Admin"))
                             {
@@ -43,7 +46,7 @@
                                 </li>
                                 <li class="nav-item  ms-2">
                                     <a class="btn btn-outline-primary" asp-area="" asp-controller="ControllerName" asp-action="GetAllControllerList">Controller List</a>
-                                </li>
+                                </li>                               
                             }
 
                             <li class="nav-item  ms-2">

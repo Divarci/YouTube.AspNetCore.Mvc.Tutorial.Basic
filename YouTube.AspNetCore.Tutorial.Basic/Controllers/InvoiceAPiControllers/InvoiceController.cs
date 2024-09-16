@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using YouTube.AspNetCore.Tutorial.Basic.Models.Dto.InvoiceApiDto.InvoiceDto;
-using YouTube.AspNetCore.Tutorial.Basic.Models.Dto.InvoiceApiDto.InvoiceItemsDto;
+using YouTube.AspNetCore.Tutorial.Basic.DynamicAuth;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Entity;
 using YouTube.AspNetCore.Tutorial.Basic.Models.ViewModels.ProductVM;
 using YouTube.AspNetCore.Tutorial.Basic.Services;
@@ -10,6 +8,7 @@ using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.InvoiceServi
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
 {
+    [DynamicAuthorization]
     public class InvoiceController : Controller
     {
         private readonly IInvoiceService _invoiceService;

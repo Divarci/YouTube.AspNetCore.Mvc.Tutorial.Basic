@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using YouTube.AspNetCore.Tutorial.Basic.DynamicAuth;
 using YouTube.AspNetCore.Tutorial.Basic.Models.Dto.InvoiceApiDto.ClientDto;
 using YouTube.AspNetCore.Tutorial.Basic.Services.InvoiceApiServices.ClientService;
 
 namespace YouTube.AspNetCore.Tutorial.Basic.Controllers.InvoiceAPiControllers
 {
+    [DynamicAuthorization]
     public class ClientController : Controller
     {
         private readonly IClientService _clientService;
